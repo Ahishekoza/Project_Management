@@ -2,7 +2,7 @@ import { House, Layers, Users } from "@deemlol/next-icons";
 
 export const authNavgations = [
     {
-        link: "/",
+        link: "/dashboard",
         icon: (props) => <House  {...props} />,
         name: "Dashboard"
     },
