@@ -14,15 +14,15 @@ const chartConfig = {
   },
   "Not Started": {
     label: "Not Started",
-    color: "#ffffff", // ✅ corrected from #fffff
+    color: "var(--chart-3)", // ✅ corrected from #fffff
   },
   "In Progress": {
     label: "In Progress",
-    color: "var(--chart-1)",
+    color: "var(--chart-2)",
   },
   Completed: {
     label: "Completed",
-    color: "#ef4444",
+    color: "var(--chart-1)",
   },
 };
 
@@ -34,7 +34,7 @@ export default function PieChartComp() {
   return (
     <ChartContainer
       config={chartConfig}
-      className="mx-auto aspect-square xl:h-[320px] md:h-[250px]  w-full"
+      className="mx-auto aspect-square h-full  w-full"
     >
       <PieChart>
         <ChartTooltip
@@ -77,7 +77,7 @@ export default function PieChartComp() {
                       y={(viewBox.cy || 0) + 24}
                       className="fill-muted-foreground"
                     >
-                      Projects Status
+                      Projects
                     </tspan>
                   </text>
                 );

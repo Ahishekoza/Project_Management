@@ -13,7 +13,7 @@ import {
 export const NavLinks = () => {
   const pathname = usePathname();
   return (
-    <div className="bg-[#804E49] font-mono w-full md:w-1/5 rounded-tr-sm rounded-br-sm h-24 md:h-full flex flex-row md:flex-col  gap-4 p-2">
+    <div className="bg-[#804E49] font-mono w-full md:w-1/5 md:rounded-tr-sm md:rounded-br-sm h-24 md:h-full flex flex-row md:flex-col  gap-4 p-2">
       <div className="flex-grow">
         <ul className="h-full flex  flex-row md:flex-col items-center  md:py-20 gap-4 md:gap-8">
           {authNavgations.map((authNav) => {

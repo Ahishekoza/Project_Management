@@ -19,13 +19,13 @@ const designerConfig = {
     label: "Total Projects",
     icon: Monitor,
     // A color like 'hsl(220, 98%, 61%)' or 'var(--color-name)'
-    color: "var(--chart-1)",
+    color: "var(--chart-2)",
   },
 };
 
 export default function BarChartComp() {
   return (
-    <ChartContainer className={"xl:h-[400px] md:h-[200px]  w-full"} config={designerConfig}>
+    <ChartContainer className={"h-full w-full"} config={designerConfig}>
       <BarChart accessibilityLayer data={designerData}>
         <CartesianGrid vertical={false} />
         <XAxis
@@ -37,7 +37,7 @@ export default function BarChartComp() {
         <YAxis />
         <ChartTooltip
           cursor={false}
-          content={<ChartTooltipContent hideLabel />}
+          content={<ChartTooltipContent  />}
         />
         <Bar dataKey="total" fill="var(--color-total)" radius={8} />
       </BarChart>

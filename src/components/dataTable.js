@@ -41,7 +41,7 @@ export const DataTable = ({ columns, data }) => {
   });
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 ">
       {/* ---Search Input */}
       <div className="mb-4">
         <Input

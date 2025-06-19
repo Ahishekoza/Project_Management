@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div>{children}</div>
+        <div className="font-mono">{children}</div>
       </body>
     </html>
   );
