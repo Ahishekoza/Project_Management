@@ -1,3 +1,6 @@
+
+import { format } from 'date-fns';
+
 // Helper functions to format the data
 export const formatProjectType = (type) => {
   const types = {
@@ -15,3 +18,7 @@ export const formatStatus = (status) => {
   };
   return statuses[status] || status;
 };
+
+export const formatDateHelpfns =(date)=>{
+  return  format(new Date(date),"dd-MM-yyyy")
+}

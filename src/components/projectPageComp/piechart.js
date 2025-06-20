@@ -9,12 +9,9 @@ const chartData = [
 ];
 
 const chartConfig = {
-  value: {
-    label: "value",
-  },
   "Not Started": {
     label: "Not Started",
-    color: "var(--chart-3)", // ✅ corrected from #fffff
+    color: "var(--chart-3)", 
   },
   "In Progress": {
     label: "In Progress",
@@ -38,8 +35,8 @@ export default function PieChartComp() {
     >
       <PieChart>
         <ChartTooltip
-          cursor={false}
-          content={<ChartTooltipContent hideLabel />}
+          cursor={true}
+          content={<ChartTooltipContent />}
         />
         <Pie
           data={chartData}

@@ -1,3 +1,112 @@
+// ---Include Contact details of the employee
+export const vendors = [
+  {
+    _id: "1",
+    vendor_name: "Rajesh Kumar",
+    vendor_type: "electrician",
+    vendor_availabitily: true,
+    vendor_availabile_date: new Date("2025-06-21"),
+  },
+  {
+    _id: "2",
+    vendor_name: "Amit Sharma",
+    vendor_type: "carpenter",
+    vendor_availabitily: false,
+    vendor_availabile_date: new Date("2025-06-25"),
+  },
+  {
+    _id: "3",
+    vendor_name: "Sunita Verma",
+    vendor_type: "construction",
+    vendor_availabitily: true,
+    vendor_availabile_date: new Date("2025-06-22"),
+  },
+  {
+    _id: "4",
+    vendor_name: "Kiran Joshi",
+    vendor_type: "electrician",
+    vendor_availabitily: false,
+    vendor_availabile_date: new Date("2025-06-28"),
+  },
+  {
+    _id: "5",
+    vendor_name: "Suresh Mehta",
+    vendor_type: "carpenter",
+    vendor_availabitily: true,
+    vendor_availabile_date: new Date("2025-06-20"),
+  },
+  {
+    _id: "6",
+    vendor_name: "Pooja Rani",
+    vendor_type: "construction",
+    vendor_availabitily: true,
+    vendor_availabile_date: new Date("2025-06-21"),
+  },
+  {
+    _id: "7",
+    vendor_name: "Vikram Chauhan",
+    vendor_type: "electrician",
+    vendor_availabitily: false,
+    vendor_availabile_date: new Date("2025-07-01"),
+  },
+  {
+    _id: "8",
+    vendor_name: "Neha Gupta",
+    vendor_type: "carpenter",
+    vendor_availabitily: true,
+    vendor_availabile_date: new Date("2025-06-23"),
+  },
+  {
+    _id: "9",
+    vendor_name: "Manoj Patel",
+    vendor_type: "construction",
+    vendor_availabitily: false,
+    vendor_availabile_date: new Date("2025-06-27"),
+  },
+  {
+    _id: "10",
+    vendor_name: "Aarti Yadav",
+    vendor_type: "electrician",
+    vendor_availabitily: true,
+    vendor_availabile_date: new Date("2025-06-20"),
+  },
+  {
+    _id: "11",
+    vendor_name: "Rakesh Singh",
+    vendor_type: "carpenter",
+    vendor_availabitily: false,
+    vendor_availabile_date: new Date("2025-07-02"),
+  },
+  {
+    _id: "12",
+    vendor_name: "Deepika Sinha",
+    vendor_type: "construction",
+    vendor_availabitily: true,
+    vendor_availabile_date: new Date("2025-06-21"),
+  },
+  {
+    _id: "13",
+    vendor_name: "Anil Kapoor",
+    vendor_type: "electrician",
+    vendor_availabitily: true,
+    vendor_availabile_date: new Date("2025-06-22"),
+  },
+  {
+    _id: "14",
+    vendor_name: "Meena Desai",
+    vendor_type: "carpenter",
+    vendor_availabitily: false,
+    vendor_availabile_date: new Date("2025-06-30"),
+  },
+  {
+    _id: "15",
+    vendor_name: "Nikhil Bansal",
+    vendor_type: "construction",
+    vendor_availabitily: true,
+    vendor_availabile_date: new Date("2025-06-20"),
+  },
+];
+
 export const projects = [
   {
     _id: "5f8d0d55b54764421b7160c1",
@@ -167,5 +276,5 @@ export const projects = [
     country: "US",
     createdAt: new Date("2023-07-07T09:15:00Z"),
     updatedAt: new Date("2023-07-07T09:15:00Z"),
-  }
+  },
 ];

@@ -13,7 +13,7 @@ import {
 export const NavLinks = () => {
   const pathname = usePathname();
   return (
-    <div className="bg-[#804E49] font-mono w-full md:w-1/5 md:rounded-tr-sm md:rounded-br-sm h-24 md:h-full flex flex-row md:flex-col  gap-4 p-2">
+    <div className="bg-[#804E49] font-mono  md:rounded-tr-sm md:rounded-br-sm h-24 md:h-full flex flex-row md:flex-col  gap-4 p-2">
       <div className="flex-grow">
         <ul className="h-full flex  flex-row md:flex-col items-center  md:py-20 gap-4 md:gap-8">
           {authNavgations.map((authNav) => {
@@ -43,9 +43,9 @@ export const NavLinks = () => {
                     </TooltipTrigger>
                     <TooltipContent>{authNav.name}</TooltipContent>
                   </Tooltip>
-                  <span className="text-[#E7DECD] hidden md:block ">
+                  {/* <span className="text-[#E7DECD] hidden md:block ">
                     {authNav.name}
-                  </span>
+                  </span> */}
                 </Link>
               </li>
             );
@@ -59,30 +59,31 @@ export const NavLinks = () => {
                   : "hover:bg-gray-700 dark:hover:bg-gray-700 hover:shadow-sm"
               }  transition-colors`}
             >
-              <span>
-                <User size={24} />
-              </span>
-              <span className="hidden md:block">User</span>
+              <Tooltip>
+                <TooltipTrigger>
+                  <User size={24} />
+                </TooltipTrigger>
+                <TooltipContent>{"User"}</TooltipContent>
+              </Tooltip>
             </Link>
           </li>
         </ul>
       </div>
 
       <Link
-        href={"/settings"}
-        className={`hidden  p-3 md:flex items-center justify-center md:justify-start gap-3 text-[#E7DECD] ${
+        href="/settings"
+        className={`hidden p-3 md:flex items-center justify-center md:justify-start gap-3 text-[#E7DECD] ${
           pathname === "/settings"
             ? "bg-gray-700"
             : "hover:bg-gray-700 dark:hover:bg-gray-700 hover:shadow-sm"
-        }  transition-colors`}
+        } transition-colors`}
       >
         <Tooltip>
-          <TooltipTrigger>
+          <TooltipTrigger asChild>
             <User size={24} />
           </TooltipTrigger>
           <TooltipContent>User</TooltipContent>
         </Tooltip>
-        <span className="hidden md:block">User</span>
       </Link>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import BarChartComp from "@/components/projectPageComp/barchart";
 import PieChartComp from "@/components/projectPageComp/piechart";
+import RadarChartComp from "@/components/projectPageComp/radarchart";
 import { Separator } from "@/components/ui/separator";
 
 export default function Project() {
@@ -39,17 +40,17 @@ export default function Project() {
         {/* Pie Chart Section */}
         <div className="flex-1 flex flex-col md:flex-row items-center justify-between gap-4">
           {/* First Pie Chart - Project Status */}
-          <div className="flex flex-col items-center ">
-            <div className="h-[250px] md:h-[300px] lg:h-[350px]">
+          <div className="flex flex-col items-center w-full md:w-1/2 ">
+            <div className="h-[250px] md:h-[300px] lg:h-[350px] w-full">
               <PieChartComp />
             </div>
             <p className="text-lg font-semibold text-center ">Project Status</p>
           </div>
 
           {/* Radar Chart */}
-          <div className="flex flex-col items-center  ">
-            <div className="h-[250px] md:h-[300px] lg:h-[350px]">
-              <PieChartComp />
+          <div className="flex flex-col items-center w-full md:w-1/2 ">
+            <div className="h-[250px] md:h-[300px] lg:h-[350px] w-full">
+              <RadarChartComp />
             </div>
             <p className="text-lg font-semibold text-center">
               Types of Projects

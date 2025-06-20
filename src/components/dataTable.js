@@ -20,7 +20,7 @@ import { useState } from "react";
 import { Input } from "./ui/input";
 import { useRouter } from "next/navigation";
 
-export const DataTable = ({ columns, data }) => {
+export const DataTable = ({ columns, data ,isRoute }) => {
   const router = useRouter();
   const [globalFilter, setGlobalFilter] = useState("");
   const table = useReactTable({
@@ -39,6 +39,10 @@ export const DataTable = ({ columns, data }) => {
       },
     },
   });
+
+  const handleRouting =(projectId)=>{
+    router.push(`/projects/${projectId}`)
+  }
 
   return (
     <div className="container mx-auto py-10 ">
@@ -78,7 +82,7 @@ export const DataTable = ({ columns, data }) => {
               <TableRow
                 key={row.id}
                 className={"cursor-pointer"}
-                onClick={() => router.push(`/projects/${row?.original?._id}`)}
+                onClick={isRoute?()=>handleRouting(row?.original?._id):()=>{}}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
