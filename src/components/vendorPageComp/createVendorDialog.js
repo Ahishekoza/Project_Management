@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { vendorType } from "@/app/constants/utils";
 
-const DialogComp = () => {
+const CreateVendorDialog = () => {
   return (
     <Dialog>
       <form>
@@ -78,4 +78,4 @@ const DialogComp = () => {
   );
 };
 
-export default DialogComp;
+export default CreateVendorDialog;

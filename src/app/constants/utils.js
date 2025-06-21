@@ -1,11 +1,11 @@
-
-
-import { House, Layers, Users } from "@deemlol/next-icons";
+import { Email, House, Layers, Users } from "@deemlol/next-icons";
 import {
   formatDateHelpfns,
   formatProjectType,
   formatStatus,
 } from "../helperfns/helperfunctions";
+
+import { z } from "zod";
 
 export const authNavgations = [
   {
@@ -80,17 +80,74 @@ export const columnsVendors = [
 ];
 
 export const vendorType = [
-  {type:"Electrician",value:"electrician"},
+  { type: "Electrician", value: "electrician" },
   {
-    type:"Carpenter",
-    value:"carpenter"
+    type: "Carpenter",
+    value: "carpenter",
   },
   {
-    type:"Plumber",
-    value:"plumber"
+    type: "Plumber",
+    value: "plumber",
   },
   {
-    type:"Construction",
-    value:"construction"
-  }
-]
+    type: "Construction",
+    value: "construction",
+  },
+];
+
+// --- In the array we will have designers who are only working on 1-2 projects and project deadline is withing the month or two
+export const availableDesigners = [
+  {
+    name: "Pranjal",
+    value: "pranjal",
+  },
+  {
+    name: "Yogesh",
+    value: "yogesh",
+  },
+  {
+    name: "Rahul",
+    value: "rahul",
+  },
+];
+
+export const projectType = [
+  {
+    name: "Commerical",
+    value: "commerical",
+  },
+  {
+    name: "Residential",
+    value: "residential",
+  },
+  {
+    name: "Bungalow/Villa",
+    value: "bungalow",
+  },
+];
+
+export const workers = [
+  "All",
+  "Carpenter",
+  "Plumber",
+  "Civil Work",
+  "Painter",
+  "Electrician",
+];
+
+
+
+
+export const createProjectSchema = z.object({
+  clientEmail: z.string().email(),
+  clientContact: z.string().min(10),
+  clientName: z.string(),
+  project_name: z.string(),
+  project_type: z.string(),
+  designer: z.string(),
+  workers: z.array(z.string()),
+  dateRange: z.object({
+    from: z.date(),
+    to: z.date(),
+  }),
+});

@@ -45,7 +45,7 @@ export const DataTable = ({ columns, data ,isRoute }) => {
   }
 
   return (
-    <div className="container mx-auto py-10 ">
+    <div className=" py-10 ">
       {/* ---Search Input */}
       <div className="mb-4">
         <Input

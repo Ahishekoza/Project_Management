@@ -38,6 +38,7 @@ export const NavLinks = () => {
                         {authNav.icon({
                           size: 24,
                           color: "#E7DECD",
+                          className:"cursor-pointer"
                         })}
                       </span>
                     </TooltipTrigger>
