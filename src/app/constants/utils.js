@@ -1,4 +1,4 @@
-import { Email, House, Layers, Users } from "@deemlol/next-icons";
+import { House, Layers, Users } from "@deemlol/next-icons";
 import {
   formatDateHelpfns,
   formatProjectType,
@@ -9,21 +9,42 @@ import { z } from "zod";
 
 export const authNavgations = [
   {
-    link: "/dashboard",
+    link: "/admin/dashboard",
     icon: (props) => <House {...props} />,
     name: "Dashboard",
   },
   {
-    link: "/vendor",
+    link: "/admin/vendor",
     icon: (props) => <Users {...props} />,
     name: "Vendors",
   },
   {
-    link: "/projects",
+    link: "/admin/projects",
     icon: (props) => <Layers {...props} />,
     name: "Projects",
   },
 ];
+
+
+
+export const vendorNavgations = [
+  {
+    link: "/vendor/dashboard",
+    icon: (props) => <House {...props} />,
+    name: "Dashboard",
+  },
+  // {
+  //   link: "/admin/vendor",
+  //   icon: (props) => <Users {...props} />,
+  //   name: "Vendors",
+  // },
+  // {
+  //   link: "/admin/projects",
+  //   icon: (props) => <Layers {...props} />,
+  //   name: "Projects",
+  // },
+];
+
 
 export const columnsDashboard = [
   {
@@ -151,3 +172,9 @@ export const createProjectSchema = z.object({
     to: z.date(),
   }),
 });
+
+
+export const mockUer ={
+  name:"Abhishek",
+  role:"admin"
+}

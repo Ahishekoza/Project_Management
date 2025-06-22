@@ -53,6 +53,7 @@ import {
 
 export function CreateProjectDialog() {
   const [step, setStep] = useState("client");
+  const [isOpen, setisOpen] = useState(false);
   const [selectWorkers, setSelectWorkers] = useState([]);
 
   const form = useForm({
@@ -92,10 +93,22 @@ export function CreateProjectDialog() {
     }
   };
 
+  const handleDialogClose = (open) => {
+    console.log(open);
+    if (!open) {
+      form.reset();
+      setStep("client");
+      setSelectWorkers([]);
+    }
+    setisOpen(open);
+  };
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={handleDialogClose}>
       <DialogTrigger asChild>
-        <Button variant="default">Create New Project</Button>
+        <Button variant="default" onClick={() => setisOpen(true)}>
+          Create New Project
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="max-w-4xl max-h-[90vh]">
@@ -104,13 +117,9 @@ export function CreateProjectDialog() {
             {step === "client" ? "Client Information" : "Project Information"}
           </DialogTitle>
         </DialogHeader>
-
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 max-h-[60vh]"
-          >
-            <ScrollArea className="max-h-[50vh] pr-4">
+        <ScrollArea className="max-h-[60vh] pr-4">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="">
               {step === "client" && (
                 <div className="flex flex-col gap-5 py-5 w-full">
                   <FormField
@@ -305,29 +314,29 @@ export function CreateProjectDialog() {
                   />
                 </div>
               )}
-            </ScrollArea>
 
-            <DialogFooter className="flex justify-between pt-4">
-              {step === "project" && (
-                <Button
-                  variant="outline"
-                  type="button"
-                  onClick={() => setStep("client")}
-                >
-                  ← Back
-                </Button>
-              )}
-              {step === "client" && (
-                <Button type="button" onClick={() => setStep("project")}>
-                  Next →
-                </Button>
-              )}
-              {step === "project" && (
-                <Button type="submit">Create Project</Button>
-              )}
-            </DialogFooter>
-          </form>
-        </Form>
+              <DialogFooter className="flex justify-between pt-4">
+                {step === "project" && (
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={() => setStep("client")}
+                  >
+                    ← Back
+                  </Button>
+                )}
+                {step === "client" && (
+                  <Button type="button" onClick={() => setStep("project")}>
+                    Next →
+                  </Button>
+                )}
+                {step === "project" && (
+                  <Button type="submit">Create Project</Button>
+                )}
+              </DialogFooter>
+            </form>
+          </Form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
