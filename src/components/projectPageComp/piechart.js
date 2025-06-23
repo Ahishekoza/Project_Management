@@ -36,7 +36,7 @@ export default function PieChartComp() {
       <PieChart>
         <ChartTooltip
           cursor={true}
-          content={<ChartTooltipContent />}
+          // content={<ChartTooltipContent />}
         />
         <Pie
           data={chartData}

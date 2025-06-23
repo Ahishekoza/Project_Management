@@ -25,7 +25,9 @@ const RadarChartComp = () => {
       <ResponsiveContainer width="100%" height="100%" >
         <RadarChart data={chartConfig} >
           {/* If ChartTooltip is a custom wrapper for Recharts' Tooltip */}
-          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+          <ChartTooltip cursor={false} 
+          // content={<ChartTooltipContent />} 
+          />
           <PolarGrid stroke="var(--chart-2)" />
           <PolarAngleAxis dataKey="type" className="bg-red-950" />
           <Radar

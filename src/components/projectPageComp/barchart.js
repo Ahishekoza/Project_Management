@@ -37,7 +37,7 @@ export default function BarChartComp() {
         <YAxis />
         <ChartTooltip
           cursor={false}
-          content={<ChartTooltipContent  />}
+          // content={<ChartTooltipContent  />}
         />
         <Bar dataKey="total" fill="var(--color-total)" radius={8} />
       </BarChart>

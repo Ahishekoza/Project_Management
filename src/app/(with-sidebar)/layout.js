@@ -1,11 +1,9 @@
+
+
 import { NavLinks } from "@/components/navLinks";
 
 
-
-
 export default function SideBarLayout({ children }) {
- 
-
 
   return (
     <div className="flex flex-col md:flex-row h-screen">

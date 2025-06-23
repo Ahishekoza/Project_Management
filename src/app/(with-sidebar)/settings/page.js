@@ -1,6 +1,12 @@
 // in settings/page.js
-export default async function Settings() {
-  await new Promise((resolve) => setTimeout(resolve, 2000)); // simulate slow load
+"use client";
 
-  return <div>Settings Page</div>;
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+
+export default function Settings() {
+  const { user, logout } = useAuth();
+
+ 
+  return <div>{user ? <div><Button variant={"destructive"} onClick={()=>logout()}>Signout</Button>{user?.role}</div> : <></>}</div>;
 }

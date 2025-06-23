@@ -119,7 +119,7 @@ export function CreateProjectDialog() {
         </DialogHeader>
         <ScrollArea className="max-h-[60vh] pr-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="">
+            <form onSubmit={form.handleSubmit(onSubmit)} >
               {step === "client" && (
                 <div className="flex flex-col gap-5 py-5 w-full">
                   <FormField

@@ -41,7 +41,7 @@ export const DataTable = ({ columns, data ,isRoute }) => {
   });
 
   const handleRouting =(projectId)=>{
-    router.push(`/projects/${projectId}`)
+    router.push(`/admin/projects/${projectId}`)
   }
 
   return (

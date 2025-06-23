@@ -174,7 +174,7 @@ export const createProjectSchema = z.object({
 });
 
 
-export const mockUer ={
-  name:"Abhishek",
-  role:"admin"
-}
+export const loginSchema=z.object({
+  email:z.string().email(),
+  password:z.string().min(8)
+})
