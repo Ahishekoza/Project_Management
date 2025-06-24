@@ -45,43 +45,35 @@ export const AuthProvider = ({ children }) => {
     return { session, success: true };
   };
 
-  const checkSession = () => {
-    const cookie = getCookie("auth-session");
+ const checkSession = () => {
+  const cookie = getCookie("auth-session");
 
-    if (!cookie) {
-      setLoading(false); // 👈 done checking
-      logout();
-      return;
-    }
+  if (!cookie) {
+    logout();
+    setLoading(false);
+    return;
+  }
 
-    let session;
-    try {
-      session = JSON.parse(decodeURIComponent(cookie));
-    } catch (e) {
-      setLoading(false);
-      logout();
-      return;
-    }
-console.log(session.user)
+  try {
+    const session = JSON.parse(decodeURIComponent(cookie));
     const now = new Date();
     const expiresAt = new Date(session.expiresAt);
 
     if (now > expiresAt) {
-      setLoading(false);
       logout();
     } else {
       setUser(session.user);
-      const timeLeft = expiresAt - now;
-      const twoMinutes = 2 * 60 * 1000;
-
-      if (timeLeft < twoMinutes) {
+      // Renew session if <2 minutes left
+      if (expiresAt - now < 2 * 60 * 1000) {
         createSession(session.user);
       }
-
-      setLoading(false); // ✅ only here after session is valid
     }
-  };
-
+  } catch (e) {
+    logout();
+  } finally {
+    setLoading(false);
+  }
+};
   const login = (userData) => {
     return createSession(userData);
   };
@@ -89,7 +81,7 @@ console.log(session.user)
   const logout = () => {
     removeCookie("auth-session");
     setUser(null);
-    router.push("/");
+    router.replace("/");
   };
 
   // Initial Check
@@ -99,7 +91,7 @@ console.log(session.user)
 
   // Periodic check
   useEffect(() => {
-    const interval = setTimeout(() => checkSession(), 60000);
+    const interval = setInterval(() => checkSession(), 60000);
 
     return () => clearInterval(interval);
   }, []);

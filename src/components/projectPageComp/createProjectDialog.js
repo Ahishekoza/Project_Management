@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { z } from "zod";
+
 import { format } from "date-fns";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -48,13 +48,16 @@ import {
   projectType,
   workers,
 } from "@/app/constants/utils";
+import { getMonthDifference } from "@/app/helperfns/helperfunctions";
+import { useProject } from "@/contexts/ProjectContext";
 
 // ---- Type for form values ----
 
 export function CreateProjectDialog() {
   const [step, setStep] = useState("client");
   const [isOpen, setisOpen] = useState(false);
-  const [selectWorkers, setSelectWorkers] = useState([]);
+  const [selectedWorkers, setSelectedWorkers] = useState([]);
+  const { handleCreateClient, handleCreateProject } = useProject();
 
   const form = useForm({
     resolver: zodResolver(createProjectSchema),
@@ -69,36 +72,87 @@ export function CreateProjectDialog() {
       workers: [],
       dateRange: {
         from: new Date(),
-        to: new Date(),
+        to: new Date(new Date().setMonth(new Date().getMonth() + 1)),
       },
     },
   });
 
-  const onSubmit = (data) => {
-    console.log("Submit data:", data);
+  const onSubmit = async (data) => {
+    // --- handle All type here
+    const {
+      clientEmail,
+      clientContact,
+      clientName,
+      project_name,
+      project_type,
+      designer,
+      workers,
+      dateRange,
+    } = data;
+    const { from, to } = dateRange;
+    const numberOfmonths = getMonthDifference(from, to);
+
+    // --- handle Client Save with _ if there is a space
+
+    // -- Client data
+    const clientData = { clientContact, clientEmail, clientName };
+    // -- after creating client get the client id #Handling Dynamic Data
+    const projectData = {
+      project_name,
+      project_type,
+      clientName,
+      designer,
+      workers,
+      dateRange,
+      project_period: numberOfmonths,
+    };
+
+    const { success, message } = handleCreateClient(clientData);
+    if (!success) {
+      alert(message);
+      return;
+    }
+
+    const projectResponse = await handleCreateProject(projectData);
+
+    if (!projectResponse.success) {
+      alert(projectResponse.message);
+    }
+
+    handleDialogClose(false);
   };
 
-  const handleWork = (worker) => {
-    const current = form.getValues("workers");
-    if (worker === "All") {
-      const updated = current.length === workers.length ? [] : workers;
-      form.setValue("workers", updated);
-      setSelectWorkers(updated);
-    } else {
-      const updated = current.includes(worker)
-        ? current.filter((w) => w !== worker)
-        : [...current, worker];
-      form.setValue("workers", updated);
-      setSelectWorkers(updated);
+  const handleDateSelect = (range) => {
+    if (range?.from && range?.to) {
+      form.setValue("dateRange", range, { shouldValidate: true });
     }
   };
 
+  const handleWorkerToggle = (worker) => {
+    let updatedWorkers;
+
+    if (worker.type === "All") {
+      updatedWorkers =
+        selectedWorkers.length === workers.length ? [] : [...workers];
+    } else {
+      const isSelected = selectedWorkers.some((w) => w.type === worker.type);
+
+      const filteredWorkers = selectedWorkers.filter((w) => w.type !== "All");
+
+      updatedWorkers = isSelected
+        ? filteredWorkers.filter((w) => w.type !== worker.type)
+        : [...filteredWorkers, worker];
+    }
+
+    setSelectedWorkers(updatedWorkers);
+    form.setValue("workers", updatedWorkers);
+  };
+
   const handleDialogClose = (open) => {
-    console.log(open);
     if (!open) {
       form.reset();
       setStep("client");
-      setSelectWorkers([]);
+      setSelectedWorkers([]);
     }
     setisOpen(open);
   };
@@ -119,7 +173,7 @@ export function CreateProjectDialog() {
         </DialogHeader>
         <ScrollArea className="max-h-[60vh] pr-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} >
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               {step === "client" && (
                 <div className="flex flex-col gap-5 py-5 w-full">
                   <FormField
@@ -196,7 +250,7 @@ export function CreateProjectDialog() {
                           value={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select Project Type" />
                             </SelectTrigger>
                           </FormControl>
@@ -224,7 +278,7 @@ export function CreateProjectDialog() {
                           value={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select Designer" />
                             </SelectTrigger>
                           </FormControl>
@@ -247,30 +301,33 @@ export function CreateProjectDialog() {
                   <FormField
                     control={form.control}
                     name="workers"
-                    render={() => (
+                    render={({ field }) => (
                       <FormItem>
                         <FormLabel>Work Type Required</FormLabel>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                          {workers.map((worker) => (
-                            <FormField
-                              key={worker}
-                              control={form.control}
-                              name="workers"
-                              render={() => (
-                                <FormItem className="flex flex-row items-start space-x-2 space-y-0">
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={selectWorkers.includes(worker)}
-                                      onCheckedChange={() => handleWork(worker)}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="text-sm font-normal">
-                                    {worker}
-                                  </FormLabel>
-                                </FormItem>
-                              )}
-                            />
-                          ))}
+                          {workers.map((worker) => {
+                            const isChecked = selectedWorkers.some(
+                              (w) => w.type === worker.type
+                            );
+                            return (
+                              <FormItem
+                                key={worker.type}
+                                className="flex flex-row items-start space-x-2 space-y-0"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={isChecked}
+                                    onCheckedChange={() =>
+                                      handleWorkerToggle(worker)
+                                    }
+                                  />
+                                </FormControl>
+                                <FormLabel className="text-sm font-normal">
+                                  {worker.type}
+                                </FormLabel>
+                              </FormItem>
+                            );
+                          })}
                         </div>
                         <FormMessage />
                       </FormItem>
@@ -303,8 +360,10 @@ export function CreateProjectDialog() {
                             <Calendar
                               mode="range"
                               selected={field.value}
-                              onSelect={field.onChange}
+                              onSelect={handleDateSelect}
                               numberOfMonths={2}
+                              disabled={{ before: new Date() }} // Disable past dates
+                              initialFocus
                             />
                           </PopoverContent>
                         </Popover>
@@ -326,7 +385,11 @@ export function CreateProjectDialog() {
                   </Button>
                 )}
                 {step === "client" && (
-                  <Button type="button" onClick={() => setStep("project")}>
+                  <Button
+                    type="button"
+                    disabled={!form.watch("clientEmail")}
+                    onClick={() => setStep("project")}
+                  >
                     Next →
                   </Button>
                 )}

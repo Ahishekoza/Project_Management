@@ -24,7 +24,7 @@ function Calendar({
   const defaultClassNames = getDefaultClassNames()
 
   return (
-    (<DayPicker
+    <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
         "bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
@@ -121,17 +121,17 @@ function Calendar({
         DayButton: CalendarDayButton,
         WeekNumber: ({ children, ...props }) => {
           return (
-            (<td {...props}>
+            <td {...props}>
               <div
                 className="flex size-(--cell-size) items-center justify-center text-center">
                 {children}
               </div>
-            </td>)
+            </td>
           );
         },
         ...components,
       }}
-      {...props} />)
+      {...props} />
   );
 }
 
@@ -149,7 +149,7 @@ function CalendarDayButton({
   }, [modifiers.focused])
 
   return (
-    (<Button
+    <Button
       ref={ref}
       variant="ghost"
       size="icon"
@@ -168,7 +168,7 @@ function CalendarDayButton({
         defaultClassNames.day,
         className
       )}
-      {...props} />)
+      {...props} />
   );
 }
 

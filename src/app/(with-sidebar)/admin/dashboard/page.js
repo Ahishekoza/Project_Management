@@ -1,11 +1,12 @@
 "use client";
 
-import { projects } from "@/app/constants/dummyData";
+// import { projects } from "@/app/constants/dummyData";
 import { columns, columnsDashboard } from "@/app/constants/utils";
 import { DataTable } from "@/components/dataTable";
+import { useProject } from "@/contexts/ProjectContext";
 
 export default function Dashboard() {
-  
+ const { projects}  = useProject()
   return (
     <>
       <p className="text-3xl  tracking-wide py-3 ">Ongoing Projects</p>

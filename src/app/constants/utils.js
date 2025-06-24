@@ -25,8 +25,6 @@ export const authNavgations = [
   },
 ];
 
-
-
 export const vendorNavgations = [
   {
     link: "/vendor/dashboard",
@@ -45,10 +43,13 @@ export const vendorNavgations = [
   // },
 ];
 
-
 export const columnsDashboard = [
   {
-    accessorKey: "client",
+    accessorKey:"project_name",
+    header:"Project Name"
+  },
+  {
+    accessorKey: "clientName",
     header: "Client Name",
   },
   {
@@ -56,9 +57,13 @@ export const columnsDashboard = [
     header: "Designer",
   },
   {
-    accessorKey: "projectType",
+    accessorKey: "project_type",
     header: "Type",
     cell: ({ row }) => formatProjectType(row.original.projectType),
+  },
+  {
+    accessorKey:"project_period",
+    header:"Project Tenure"
   },
   {
     accessorKey: "status",
@@ -148,16 +153,25 @@ export const projectType = [
 ];
 
 export const workers = [
-  "All",
-  "Carpenter",
-  "Plumber",
-  "Civil Work",
-  "Painter",
-  "Electrician",
+  {
+    type: "All",
+  },
+  {
+    type: "Carpenter",
+  },
+  {
+    type: "Plumber",
+  },
+  {
+    type: "Civil Work",
+  },
+  {
+    type: "Painter",
+  },
+  {
+    type: "Electrician",
+  },
 ];
-
-
-
 
 export const createProjectSchema = z.object({
   clientEmail: z.string().email(),
@@ -166,15 +180,17 @@ export const createProjectSchema = z.object({
   project_name: z.string(),
   project_type: z.string(),
   designer: z.string(),
-  workers: z.array(z.string()),
+  workers: z.array(z.object({
+    type:z.string(),
+    selected:z.boolean().optional()
+  })),
   dateRange: z.object({
     from: z.date(),
     to: z.date(),
   }),
 });
 
-
-export const loginSchema=z.object({
-  email:z.string().email(),
-  password:z.string().min(8)
-})
+export const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});

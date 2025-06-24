@@ -37,7 +37,7 @@ export default function Home() {
   });
 
   const handleLogin = (data) => {
-    const addRole = { ...data, role: "vendor" };
+    const addRole = { ...data, role: "admin" };
     const { session,success } = login(addRole);
 
     if (success) {

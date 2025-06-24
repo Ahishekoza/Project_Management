@@ -4,7 +4,6 @@ import {
   Radar,
   RadarChart,
   ResponsiveContainer,
-  Tooltip,
 } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
 
@@ -26,7 +25,7 @@ const RadarChartComp = () => {
         <RadarChart data={chartConfig} >
           {/* If ChartTooltip is a custom wrapper for Recharts' Tooltip */}
           <ChartTooltip cursor={false} 
-          // content={<ChartTooltipContent />} 
+          content={<ChartTooltipContent />} 
           />
           <PolarGrid stroke="var(--chart-2)" />
           <PolarAngleAxis dataKey="type" className="bg-red-950" />
