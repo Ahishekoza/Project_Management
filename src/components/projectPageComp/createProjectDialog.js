@@ -50,6 +50,8 @@ import {
 } from "@/app/constants/utils";
 import { getMonthDifference } from "@/app/helperfns/helperfunctions";
 import { useProject } from "@/contexts/ProjectContext";
+import { useRouter } from "next/navigation";
+
 
 // ---- Type for form values ----
 
@@ -58,6 +60,7 @@ export function CreateProjectDialog() {
   const [isOpen, setisOpen] = useState(false);
   const [selectedWorkers, setSelectedWorkers] = useState([]);
   const { handleCreateClient, handleCreateProject } = useProject();
+  const router =  useRouter()
 
   const form = useForm({
     resolver: zodResolver(createProjectSchema),
@@ -77,8 +80,8 @@ export function CreateProjectDialog() {
     },
   });
 
-  const onSubmit = async (data) => {
-    // --- handle All type here
+
+  const handleOnSubmit = (data) => {
     const {
       clientEmail,
       clientContact,
@@ -89,14 +92,12 @@ export function CreateProjectDialog() {
       workers,
       dateRange,
     } = data;
+
     const { from, to } = dateRange;
-    const numberOfmonths = getMonthDifference(from, to);
+    const project_period = getMonthDifference(from, to);
 
-    // --- handle Client Save with _ if there is a space
-
-    // -- Client data
     const clientData = { clientContact, clientEmail, clientName };
-    // -- after creating client get the client id #Handling Dynamic Data
+
     const projectData = {
       project_name,
       project_type,
@@ -104,22 +105,34 @@ export function CreateProjectDialog() {
       designer,
       workers,
       dateRange,
-      project_period: numberOfmonths,
+      project_period,
+      status:"not_started"
     };
 
-    const { success, message } = handleCreateClient(clientData);
-    if (!success) {
-      alert(message);
-      return;
+    try {
+      const clientResponse = handleCreateClient(clientData);
+
+      if (!clientResponse?.success) {
+        alert(clientResponse?.message || "Client creation failed.");
+        return;
+      }
+
+      const projectResponse = handleCreateProject(projectData);
+
+      if (!projectResponse?.success) {
+        alert(projectResponse?.message || "Project creation failed.");
+        return;
+      }
+
+      alert("Client and project created successfully.");
+
+      
+      handleDialogClose(false);
+      router.push("/admin/dashboard")
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("Something went wrong. Please try again.");
     }
-
-    const projectResponse = await handleCreateProject(projectData);
-
-    if (!projectResponse.success) {
-      alert(projectResponse.message);
-    }
-
-    handleDialogClose(false);
   };
 
   const handleDateSelect = (range) => {
@@ -155,6 +168,7 @@ export function CreateProjectDialog() {
       setSelectedWorkers([]);
     }
     setisOpen(open);
+    
   };
 
   return (
@@ -173,7 +187,7 @@ export function CreateProjectDialog() {
         </DialogHeader>
         <ScrollArea className="max-h-[60vh] pr-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(handleOnSubmit)}>
               {step === "client" && (
                 <div className="flex flex-col gap-5 py-5 w-full">
                   <FormField

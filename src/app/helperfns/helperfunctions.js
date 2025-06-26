@@ -2,11 +2,12 @@ import { format } from "date-fns";
 
 // Helper functions to format the data
 export const formatProjectType = (type) => {
-  console.log(type)
   const types = {
+    commercial: "Commercial",
+    residential: "Residential",
+    bungalow: "Bungalow/Villa",
     whole_house: "Whole House",
     specific_room: "Specific Room",
-    "bungalow":"Bungalow"
   };
   return types[type] || type;
 };

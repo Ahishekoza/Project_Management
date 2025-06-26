@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export function middleware(request) {
   const cookie = request.cookies.get("auth-session")?.value;
 
-  if (!cookie) {
+  if (!cookie || cookie === null) {
     return NextResponse.redirect(new URL("/unauthorized", request.url));
   }
 

@@ -59,11 +59,11 @@ export const columnsDashboard = [
   {
     accessorKey: "project_type",
     header: "Type",
-    cell: ({ row }) => formatProjectType(row.original.projectType),
+    cell: ({ row }) => formatProjectType(row.original.project_type),
   },
   {
     accessorKey:"project_period",
-    header:"Project Tenure"
+    header:"Project Tenure [Mons]"
   },
   {
     accessorKey: "status",
@@ -177,12 +177,12 @@ export const createProjectSchema = z.object({
   clientEmail: z.string().email(),
   clientContact: z.string().min(10),
   clientName: z.string(),
-  project_name: z.string(),
+  project_name: z.string().min(1,"Project name is required"),
   project_type: z.string(),
-  designer: z.string(),
+  designer: z.string().min(1,"Please select the designer"),
   workers: z.array(z.object({
     type:z.string(),
-    selected:z.boolean().optional()
+    
   })),
   dateRange: z.object({
     from: z.date(),

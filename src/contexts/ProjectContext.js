@@ -12,16 +12,14 @@ export const ProjectProvider = ({ children }) => {
   // Read localStorage only on client after mount
   useEffect(() => {
     const storedProjects = localStorage.getItem("projects");
-    if (storedProjects) {
-      setProjects(JSON.parse(storedProjects));
-    }
+    storedProjects ? setProjects(JSON.parse(storedProjects)) : setProjects([])
   }, []);
 
   useEffect(() => {
     localStorage.setItem("projects", JSON.stringify(projects));
   }, [projects]);
 
-    useEffect(() => {
+  useEffect(() => {
     const storedClients = localStorage.getItem("clients");
     if (storedClients) {
       setClients(JSON.parse(storedClients));
@@ -39,7 +37,7 @@ export const ProjectProvider = ({ children }) => {
 
     if (ispresent) {
       alert("Client is already present you can add new project in to it");
-      return {success:true};
+      return;
     }
 
     try {
@@ -54,9 +52,10 @@ export const ProjectProvider = ({ children }) => {
   };
 
   // --- create project
-  const handleCreateProject = async(projectData) => {
+  const handleCreateProject =  (projectData) => {
+    console.log(projectData)
     const ispresent = projects.some(
-      (c) => c.id === projectData?.id
+      (c) => c.project_name === projectData.project_name
     );
 
     if (ispresent) {
@@ -66,7 +65,7 @@ export const ProjectProvider = ({ children }) => {
 
     try {
       setProjects((preProjects) => [...preProjects, projectData]);
-      await new Promise((res)=>setTimeout(()=>res,1000))
+    
       return { success: true, message: "project added Successfully" };
     } catch (error) {
       return {

@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProjectProvider } from "@/contexts/ProjectContext";
+import { VendorProvider } from "@/contexts/VendorContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,7 +26,9 @@ export default function RootLayout({ children }) {
       >
         <AuthProvider>
           <ProjectProvider>
-            <div className="font-mono">{children}</div>
+            <VendorProvider>
+              <div className="font-mono">{children}</div>
+            </VendorProvider>
           </ProjectProvider>
         </AuthProvider>
       </body>
