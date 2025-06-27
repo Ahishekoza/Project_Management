@@ -13,6 +13,14 @@ export const vendors = [
     vendor_type: "carpenter",
     vendor_availabitily: false,
     vendor_availabile_date: new Date("2025-06-25"),
+    projectassigned:[
+      {
+        project_id:"",
+        project_name:"",
+        status:"",
+        designer:""
+      }
+    ]
   },
   {
     _id: "3",

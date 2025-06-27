@@ -22,7 +22,7 @@ export const VendorProvider = ({ children }) => {
 
   const handleAvailablevendorsPerProject = (projectWorkers) => {
     // --- first get the all available vendors
-    // --- list required types 
+    // --- list required types
     // --- data type
     // --- add the vendors as per type in segregated List
     const availablevendors = vendorsData.filter((v) => v.vendor_availabitily);
@@ -37,22 +37,35 @@ export const VendorProvider = ({ children }) => {
       painter: [],
     };
 
-    availablevendors.forEach((vendor)=>{
-        const type  = vendor.vendor_type.toLowerCase()
+    availablevendors.forEach((vendor) => {
+      const type = vendor.vendor_type.toLowerCase();
 
-        if(requiredtypes.includes(type)){
-            segregatedVendors[type].push(vendor)
-        }
-    })
+      if (requiredtypes.includes(type)) {
+        segregatedVendors[type].push(vendor);
+      }
+    });
 
-    setAvaliableVendorList(segregatedVendors)
+    setAvaliableVendorList(segregatedVendors);
+  };
 
+  const handleProjectRequest = (vendorInfo, projectInfo) => {
+    const requestvendor = vendorsData.find((vd) => vd.id === vendorInfo.id);
+
+    const isAlreadyRequested = requestvendor.projectassigned.some(
+      (re) => re.project_id === projectInfo?.project_id
+    );
+
+    // --- if already present just give a reminder don`t add 
+
+    requestvendor.projectassigned.push(projectInfo)
+    // --- message display
   };
 
   const value = {
     vendorsData,
     avaliableVendorList,
-    handleAvailablevendorsPerProject
+    handleAvailablevendorsPerProject,
+    handleProjectRequest
   };
 
   return (

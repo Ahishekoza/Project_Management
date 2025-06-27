@@ -12,7 +12,7 @@ export const ProjectProvider = ({ children }) => {
   // Read localStorage only on client after mount
   useEffect(() => {
     const storedProjects = localStorage.getItem("projects");
-    storedProjects ? setProjects(JSON.parse(storedProjects)) : setProjects([])
+    storedProjects ? setProjects(JSON.parse(storedProjects)) : setProjects([]);
   }, []);
 
   useEffect(() => {
@@ -52,8 +52,8 @@ export const ProjectProvider = ({ children }) => {
   };
 
   // --- create project
-  const handleCreateProject =  (projectData) => {
-    console.log(projectData)
+  const handleCreateProject = (projectData) => {
+    console.log(projectData);
     const ispresent = projects.some(
       (c) => c.project_name === projectData.project_name
     );
@@ -65,7 +65,7 @@ export const ProjectProvider = ({ children }) => {
 
     try {
       setProjects((preProjects) => [...preProjects, projectData]);
-    
+
       return { success: true, message: "project added Successfully" };
     } catch (error) {
       return {
@@ -76,7 +76,41 @@ export const ProjectProvider = ({ children }) => {
   };
 
   // ---Assign to vendor and then notify
-  const handleAssignToVendor = (projectId, vendor_type, vendorInfo) => {};
+  const handleAssignToVendor = (projectId, vendor_type, vendorInfo) => {
+    // project = {
+    //   workers: [{ type: "carpenter", requestedvendor: [{id:"",status:""}] }],
+    // };
+
+    const isAlreadyRequested = projects
+      .find((p) => p.project_name === projectId)
+      ?.workers.find((w) => w.type === vendor_type)
+      ?.requestedvendor.some((v) => v.id === vendorInfo); // requestedvendor.includes(vendorInfo)
+
+    if (isAlreadyRequested?.status === "pending") {
+      alert("This Vendor has already been requested");
+      return;
+    }
+    
+    // if(isAlreadyRequested?.status === "rejected"){
+
+    // }
+
+    const currentWorker = projects
+      .filter((p) => p.project_name === projectId)
+      ?.workers.filter((w) => w.type === vendor_type);
+
+    if (!currentWorker.requestedvendor) {
+      currentWorker.requestedvendor = [];
+    }
+
+    currentWorker.requestedvendor.push(vendorInfo);
+
+    
+
+    alert("request has been sent to vendor");
+    return
+    // ---handle exporting data to vendor
+  };
 
   // --- Project will be send to vendors
   const handleNotification = () => {};
@@ -85,6 +119,7 @@ export const ProjectProvider = ({ children }) => {
     projects,
     handleCreateClient,
     handleCreateProject,
+    handleAssignToVendor,
   };
 
   return (

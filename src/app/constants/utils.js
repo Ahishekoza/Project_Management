@@ -45,8 +45,8 @@ export const vendorNavgations = [
 
 export const columnsDashboard = [
   {
-    accessorKey:"project_name",
-    header:"Project Name"
+    accessorKey: "project_name",
+    header: "Project Name",
   },
   {
     accessorKey: "clientName",
@@ -62,8 +62,8 @@ export const columnsDashboard = [
     cell: ({ row }) => formatProjectType(row.original.project_type),
   },
   {
-    accessorKey:"project_period",
-    header:"Project Tenure [Mons]"
+    accessorKey: "project_period",
+    header: "Project Tenure [Mons]",
   },
   {
     accessorKey: "status",
@@ -177,13 +177,25 @@ export const createProjectSchema = z.object({
   clientEmail: z.string().email(),
   clientContact: z.string().min(10),
   clientName: z.string(),
-  project_name: z.string().min(1,"Project name is required"),
+  project_name: z.string().min(1, "Project name is required"),
   project_type: z.string(),
-  designer: z.string().min(1,"Please select the designer"),
-  workers: z.array(z.object({
-    type:z.string(),
-    
-  })),
+  designer: z.string().min(1, "Please select the designer"),
+  workers: z.array(
+    z.object({
+      type: z.string(),
+      requestedvendor: z.array().optional(),
+      assignedVendor: z.object().optional(),
+      rejectedVendor: z
+        .array(
+          z.object({
+            id: z.string(),
+            status: z.enum(["accepted", "rejected"]),
+            vendor_name: z.string(),
+          })
+        )
+        .optional(),
+    })
+  ),
   dateRange: z.object({
     from: z.date(),
     to: z.date(),
