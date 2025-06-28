@@ -99,6 +99,7 @@ export function CreateProjectDialog() {
     const clientData = { clientContact, clientEmail, clientName };
 
     const projectData = {
+      id:1,
       project_name,
       project_type,
       clientName,

@@ -183,17 +183,6 @@ export const createProjectSchema = z.object({
   workers: z.array(
     z.object({
       type: z.string(),
-      requestedvendor: z.array().optional(),
-      assignedVendor: z.object().optional(),
-      rejectedVendor: z
-        .array(
-          z.object({
-            id: z.string(),
-            status: z.enum(["accepted", "rejected"]),
-            vendor_name: z.string(),
-          })
-        )
-        .optional(),
     })
   ),
   dateRange: z.object({
@@ -206,3 +195,16 @@ export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 });
+
+
+
+// ---Thinking of adding time
+const vendorAssignment  = [
+  {
+    project:z.string(),
+    vendor_id:z.string(),
+    vendor_type:z.string(),
+    status:z.enum(["accepted,rejected,requested"]),
+    designer:z.string()
+  }
+]

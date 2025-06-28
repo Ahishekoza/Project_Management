@@ -8,6 +8,7 @@ export const ProjectProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [projectNotification, setProjectNotification] = useState([]);
   const [clients, setClients] = useState([]);
+  const [vendorAssignments, setVendorAssignments] = useState([]);
 
   // Read localStorage only on client after mount
   useEffect(() => {
@@ -29,6 +30,23 @@ export const ProjectProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem("clients", JSON.stringify(clients));
   }, [clients]);
+
+  // --- vendor Assignments
+  // --- every time useContext is called render / check if vendorAssignments is stored in localstorage
+  useEffect(() => {
+    const storedVendorAssignments = localStorage.getItem("vendorsAssignment");
+    if (storedVendorAssignments) {
+      setVendorAssignments(JSON.parse(storedVendorAssignments));
+    }
+  }, []);
+
+  // ---check wether vendor Assignment List is changed if yes then fetch the new list everytime
+  useEffect(() => {
+    localStorage.setItem(
+      "vendorsAssignment",
+      JSON.stringify(vendorAssignments)
+    );
+  }, [vendorAssignments]);
 
   const handleCreateClient = (clientData) => {
     const ispresent = clients.some(
@@ -76,40 +94,33 @@ export const ProjectProvider = ({ children }) => {
   };
 
   // ---Assign to vendor and then notify
-  const handleAssignToVendor = (projectId, vendor_type, vendorInfo) => {
-    // project = {
-    //   workers: [{ type: "carpenter", requestedvendor: [{id:"",status:""}] }],
-    // };
+  const handleAssignToVendor = (projectId, vendorInfo) => {
+    //  --- check in the vendor list does project exist  and vendor id and type exist if yes the then display the vendor status
+    // ---if not registered then push the new vendor assignment in the array
+    const isPresent = vendorAssignments.find(
+      (va) => va.project_id === projectId && va.vendor_id === vendorInfo?._id
+    );
 
-    const isAlreadyRequested = projects
-      .find((p) => p.project_name === projectId)
-      ?.workers.find((w) => w.type === vendor_type)
-      ?.requestedvendor.some((v) => v.id === vendorInfo); // requestedvendor.includes(vendorInfo)
-
-    if (isAlreadyRequested?.status === "pending") {
-      alert("This Vendor has already been requested");
+    if (isPresent) {
+      alert(
+        `Project has been assigned to the vendor . current status is ${isPresent?.status}`
+      );
       return;
     }
-    
-    // if(isAlreadyRequested?.status === "rejected"){
 
-    // }
+    const assignToVendor = {
+      project_id: projectId,
+      vendor_id: vendorInfo?.id,
+      status: "requested",
+      vendor_name:vendorInfo?.vendor_name,
+      vendor_type: vendorInfo?.vendor_type,
+    };
 
-    const currentWorker = projects
-      .filter((p) => p.project_name === projectId)
-      ?.workers.filter((w) => w.type === vendor_type);
-
-    if (!currentWorker.requestedvendor) {
-      currentWorker.requestedvendor = [];
-    }
-
-    currentWorker.requestedvendor.push(vendorInfo);
-
-    
-
-    alert("request has been sent to vendor");
-    return
-    // ---handle exporting data to vendor
+    setVendorAssignments((prev) => [...prev, assignToVendor]);
+    alert(
+      `Project has been assigned for worker type ${vendorInfo?.vendor_type} `
+    );
+    return;
   };
 
   // --- Project will be send to vendors
@@ -117,6 +128,7 @@ export const ProjectProvider = ({ children }) => {
 
   const value = {
     projects,
+    vendorAssignments,
     handleCreateClient,
     handleCreateProject,
     handleAssignToVendor,
