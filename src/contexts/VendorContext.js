@@ -3,11 +3,13 @@
 import { vendors } from "@/app/constants/dummyData";
 import { useContext, createContext, useState, useEffect } from "react";
 import { useProject } from "./ProjectContext";
+import { useAuth } from "./AuthContext";
 
 const VendorContext = createContext();
 
 export const VendorProvider = ({ children }) => {
-  const { projects } = useProject();
+  const { projects, vendorAssignments, setVendorAssignments } = useProject();
+  const { user } = useAuth();
 
   //    ---- data format
   // {
@@ -48,25 +50,49 @@ export const VendorProvider = ({ children }) => {
     setAvaliableVendorList(segregatedVendors);
   };
 
-  const handleProjectRequest = (vendorInfo, projectInfo) => {
-    const requestvendor = vendorsData.find((vd) => vd.id === vendorInfo.id);
+  const handleProjectRequest = () => {
+    // --- check if there are any new requests for the vendor // in future also add the type
+    // --- check on the basis of name  // in future we will verify with the id
 
-    const isAlreadyRequested = requestvendor.projectassigned.some(
-      (re) => re.project_id === projectInfo?.project_id
+    console.log(user?.email);
+    const noOfRequests = vendorAssignments.filter(
+      (va) => va?.vendor_name === user?.email && va?.status === "requested"
     );
 
-    // --- if already present just give a reminder don`t add 
+    return noOfRequests;
 
-    requestvendor.projectassigned.push(projectInfo)
-    // --- message display
+    // --- return data which will have number of requests from which designer / admin
+    // --- the functions end here but as per the data flow next step will be clicking on the request and
+    // --- then go to the requests page and accept or decline it  . which will be handled in diff fuction
   };
 
-  const value = {
-    vendorsData,
-    avaliableVendorList,
+  const handleProjectAcceptDecline = (vendorInfo, decision) => {
+    const updatedVendorAssignmentList = vendorAssignments.map((va) => {
+      const match =
+        va.project_id === vendorInfo.project_id &&
+        va.vendor_name === vendorInfo.vendor_name &&
+        va.vendor_type === vendorInfo.vendor_type;
+
+      if (match) {
+        return {
+          ...va,
+          status: decision === "accepted" ? "accepted" : "rejected",
+        };
+      }
+
+      return va;
+    });
+
+    setVendorAssignments(updatedVendorAssignmentList);
+  };
+
+  const value  = {
     handleAvailablevendorsPerProject,
-    handleProjectRequest
-  };
+    handleProjectAcceptDecline,
+    handleProjectRequest,
+    avaliableVendorList,
+    vendorsData
+  }
 
   return (
     <VendorContext.Provider value={value}>{children}</VendorContext.Provider>

@@ -20,11 +20,11 @@ import { useState } from "react";
 import { Input } from "./ui/input";
 import { useRouter } from "next/navigation";
 
-export const DataTable = ({ columns, data ,isRoute }) => {
+export const DataTable = ({ columns, data, isRoute }) => {
   const router = useRouter();
   const [globalFilter, setGlobalFilter] = useState("");
   const table = useReactTable({
-    data,
+     data: data ?? [],
     columns,
     state: {
       globalFilter,
@@ -40,9 +40,9 @@ export const DataTable = ({ columns, data ,isRoute }) => {
     },
   });
 
-  const handleRouting =(projectId)=>{
-    router.push(`/admin/projects/${projectId}`)
-  }
+  const handleRouting = (projectId) => {
+    router.push(`/admin/projects/${projectId}`);
+  };
 
   return (
     <div className=" py-10 ">
@@ -77,12 +77,14 @@ export const DataTable = ({ columns, data ,isRoute }) => {
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {table?.getRowModel()?.rows?.length > 0 ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                className={"cursor-pointer"}
-                onClick={isRoute?()=>handleRouting(row?.original?._id):()=>{}}
+                className="cursor-pointer"
+                onClick={
+                  isRoute ? () => handleRouting(row?.original?._id) : () => {}
+                }
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>

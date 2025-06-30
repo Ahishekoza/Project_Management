@@ -27,7 +27,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function Home() {
   const router = useRouter();
-  const { user, login } = useAuth();
+  const {  login } = useAuth();
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {

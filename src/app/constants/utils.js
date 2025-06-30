@@ -6,6 +6,9 @@ import {
 } from "../helperfns/helperfunctions";
 
 import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { useVendor } from "@/contexts/VendorContext";
+
 
 export const authNavgations = [
   {
@@ -105,6 +108,85 @@ export const columnsVendors = [
   // }
 ];
 
+export const useColumnsProjectRequests = () => {
+  const { handleProjectAcceptDecline } = useVendor();
+
+  return [
+    {
+      accessorKey: "project_id",
+      header: "Project",
+    },
+    {
+      accessorKey: "designer",
+      header: "Designer",
+    },
+    {
+      accessorKey: "duration",
+      header: "Duration",
+    },
+    {
+      accessorKey: "status",
+      header: "Request Status",
+      cell: ({ row }) => {
+        const status = row.getValue("status");
+
+        let color = "";
+        switch (status) {
+          case "accepted":
+            color = "text-green-600 bg-green-100";
+            break;
+          case "requested":
+            color = "text-yellow-700 bg-yellow-100";
+            break;
+          case "rejected":
+            color = "text-red-600 bg-red-100";
+            break;
+          default:
+            color = "text-gray-600 bg-gray-100";
+        }
+
+        return (
+          <span className={`px-2 py-1 rounded text-sm font-medium ${color}`}>
+            {status}
+          </span>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Accept / Decline",
+      cell: ({ row }) => {
+        console.log(row?.original);
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              variant={"secondary hover:bg-none"}
+              size={"sm"}
+              className={"cursor-pointer bg-green-500 text-white"}
+              onClick={() =>
+                handleProjectAcceptDecline(row?.original, "accepted")
+              }
+            >
+              Accept
+            </Button>
+            <Button
+              variant={"destructive "}
+              size={"sm"}
+              className={"cursor-pointer "}
+              onClick={() =>
+                handleProjectAcceptDecline(row?.original, "rejected")
+              }
+            >
+              Decline
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
+};
+
+
 export const vendorType = [
   { type: "Electrician", value: "electrician" },
   {
@@ -192,19 +274,17 @@ export const createProjectSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string(),
   password: z.string().min(8),
 });
 
-
-
 // ---Thinking of adding time
-const vendorAssignment  = [
+const vendorAssignment = [
   {
-    project:z.string(),
-    vendor_id:z.string(),
-    vendor_type:z.string(),
-    status:z.enum(["accepted,rejected,requested"]),
-    designer:z.string()
-  }
-]
+    project: z.string(),
+    vendor_id: z.string(),
+    vendor_type: z.string(),
+    status: z.enum(["accepted,rejected,requested"]),
+    designer: z.string(),
+  },
+];

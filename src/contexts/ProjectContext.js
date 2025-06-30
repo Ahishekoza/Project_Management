@@ -129,6 +129,7 @@ export const ProjectProvider = ({ children }) => {
   const value = {
     projects,
     vendorAssignments,
+    setVendorAssignments,
     handleCreateClient,
     handleCreateProject,
     handleAssignToVendor,
