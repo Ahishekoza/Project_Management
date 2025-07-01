@@ -20,14 +20,25 @@ export const VendorProvider = ({ children }) => {
   //         painter:[]
   //     }
   const [avaliableVendorList, setAvaliableVendorList] = useState();
-  const [vendorsData, setvendorsData] = useState(vendors);
+  const [vendorsData, setvendorsData] = useState();
+
+    useEffect(() => {
+    const storedVendors = localStorage.getItem("vendorData");
+    storedVendors ? setvendorsData(JSON.parse(storedVendors)) : setvendorsData(vendors);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("vendorData", JSON.stringify(vendorsData));
+  }, [vendorsData]);
 
   const handleAvailablevendorsPerProject = (projectWorkers) => {
+    console.log(projectWorkers)
     // --- first get the all available vendors
     // --- list required types
     // --- data type
     // --- add the vendors as per type in segregated List
     const availablevendors = vendorsData.filter((v) => v.vendor_availabitily);
+    console.log(availablevendors)
 
     const requiredtypes = projectWorkers.map((w) => w.type.toLowerCase());
 
@@ -54,10 +65,18 @@ export const VendorProvider = ({ children }) => {
     // --- check if there are any new requests for the vendor // in future also add the type
     // --- check on the basis of name  // in future we will verify with the id
 
-    console.log(user?.email);
-    const noOfRequests = vendorAssignments.filter(
-      (va) => va?.vendor_name === user?.email && va?.status === "requested"
+    const filterAssignmentForLoginedUser = vendorAssignments.filter(
+      (va) => va?.vendor_name === user?.email
     );
+
+    const noOfRequests = [
+      ...filterAssignmentForLoginedUser.filter(
+        (fa) => fa?.status === "requested"
+      ),
+      ...filterAssignmentForLoginedUser.filter(
+        (fa) => fa?.status !== "requested"
+      ),
+    ];
 
     return noOfRequests;
 
@@ -84,15 +103,32 @@ export const VendorProvider = ({ children }) => {
     });
 
     setVendorAssignments(updatedVendorAssignmentList);
+
+   if (decision === "accepted") {
+    const updatedVendors = vendorsData.map((vendor) => {
+      if (
+        vendor.vendor_name === vendorInfo.vendor_name &&
+        vendor.vendor_type === vendorInfo.vendor_type
+      ) {
+        return {
+          ...vendor,
+          vendor_availabitily: false, // mark as unavailable
+        };
+      }
+      return vendor;
+    });
+
+    setvendorsData(updatedVendors);
+  }
   };
 
-  const value  = {
+  const value = {
     handleAvailablevendorsPerProject,
     handleProjectAcceptDecline,
     handleProjectRequest,
     avaliableVendorList,
-    vendorsData
-  }
+    vendorsData,
+  };
 
   return (
     <VendorContext.Provider value={value}>{children}</VendorContext.Provider>

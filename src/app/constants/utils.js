@@ -156,7 +156,7 @@ export const useColumnsProjectRequests = () => {
       id: "actions",
       header: "Accept / Decline",
       cell: ({ row }) => {
-        console.log(row?.original);
+        
         return (
           <div className="flex items-center gap-2">
             <Button

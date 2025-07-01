@@ -27,39 +27,46 @@ const ProjectDisplay = ({
       {Object.entries(avaliableVendorList)
         .filter(([, vendors]) => vendors.length > 0)
         .map(([type, vendors], index) => {
-          // --- checking the status and displaying 
-          const assignedStatus = vendorAssignments.find((va)=>va?.project_id === projectId && va?.vendor_type === type)
+          // --- checking the status and displaying
+          const assignedStatus = vendorAssignments.find(
+            (va) => va?.project_id === projectId && va?.vendor_type === type
+          );
           return (
             <>
               <Card key={`${type}-${index}`}>
                 <CardHeader
-                  className={"flex flex-col md:flex-row items-center"}
+                  className={"flex flex-col md:flex-row items-center md:px-6 px-0"}
                 >
                   <div className="space-y-2 text-left">
                     <CardTitle>{type.toUpperCase()}</CardTitle>
                     <CardDescription>Maintain data for {type}</CardDescription>
                   </div>
                   {/* --- handle vendor selection */}
-                  <Select
-                    className="flex-1"
-                    onValueChange={(selectedVendorId) => {
-                      const selectedVendor = vendors.find(
-                        (v) => v?._id === selectedVendorId
-                      );
-                      handleValueChange(selectedVendor);
-                    }}
-                  >
-                    <SelectTrigger className={"w-full"}>
-                      <SelectValue placeholder={`VendorsList ${type}`} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {vendors.map((vendor) => (
-                        <SelectItem value={vendor?._id} key={vendor?._id}>
-                          {vendor?.vendor_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {assignedStatus?.vendor_name !== null &&
+                  assignedStatus?.status === "accepted" ? (
+                    <p className="md:text-right text-center w-full">Vendor appointed :- {assignedStatus?.vendor_name}</p>
+                  ) : (
+                    <Select
+                      className="flex-1"
+                      onValueChange={(selectedVendorId) => {
+                        const selectedVendor = vendors.find(
+                          (v) => v?._id === selectedVendorId
+                        );
+                        handleValueChange(selectedVendor);
+                      }}
+                    >
+                      <SelectTrigger className={"w-full"}>
+                        <SelectValue placeholder={`VendorsList ${type}`} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {vendors.map((vendor) => (
+                          <SelectItem value={vendor?._id} key={vendor?._id}>
+                            {vendor?.vendor_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </CardHeader>
                 <ScrollArea className={"h-48 w-ful"}>
                   <CardContent>
@@ -110,8 +117,8 @@ const ProjectDisplay = ({
                   </CardContent>
                 </ScrollArea>
                 <CardFooter>
-                <p>{assignedStatus?.status}</p>
-              </CardFooter>
+                  <p>{assignedStatus?.status}</p>
+                </CardFooter>
               </Card>
             </>
           );

@@ -41,6 +41,7 @@ export const DataTable = ({ columns, data, isRoute }) => {
   });
 
   const handleRouting = (projectId) => {
+    console.log(projectId)
     router.push(`/admin/projects/${projectId}`);
   };
 
@@ -83,7 +84,7 @@ export const DataTable = ({ columns, data, isRoute }) => {
                 key={row.id}
                 className="cursor-pointer"
                 onClick={
-                  isRoute ? () => handleRouting(row?.original?._id) : () => {}
+                  isRoute ? () => handleRouting(row?.original?.id) : () => {}
                 }
               >
                 {row.getVisibleCells().map((cell) => (

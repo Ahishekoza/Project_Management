@@ -16,7 +16,7 @@ const Dashboard = () => {
       const requests = handleProjectRequest();
       setRequestsData(requests);
     }
-  }, [loading, user]);
+  }, [loading, user,requestsData]);
 
   return (
     <div>
