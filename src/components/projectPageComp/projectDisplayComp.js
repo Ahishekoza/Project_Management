@@ -14,14 +14,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import TaskDisplayComp from "./taskDisplayComp";
+
 
 const ProjectDisplay = ({
   avaliableVendorList,
   handleValueChange,
-  projectId,
+  project,
   vendorAssignments,
 }) => {
+  console.log(project)
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
       {Object.entries(avaliableVendorList)
@@ -29,13 +31,13 @@ const ProjectDisplay = ({
         .map(([type, vendors], index) => {
           // --- checking the status and displaying
           const assignedStatus = vendorAssignments.find(
-            (va) => va?.project_id === projectId && va?.vendor_type === type
+            (va) => va?.project_id === String(project?.id) && va?.vendor_type === type
           );
           return (
             <>
               <Card key={`${type}-${index}`}>
                 <CardHeader
-                  className={"flex flex-col md:flex-row items-center md:px-6 px-0"}
+                  className={"flex flex-col md:flex-row items-center  "}
                 >
                   <div className="space-y-2 text-left">
                     <CardTitle>{type.toUpperCase()}</CardTitle>
@@ -44,7 +46,9 @@ const ProjectDisplay = ({
                   {/* --- handle vendor selection */}
                   {assignedStatus?.vendor_name !== null &&
                   assignedStatus?.status === "accepted" ? (
-                    <p className="md:text-right text-center w-full">Vendor appointed :- {assignedStatus?.vendor_name}</p>
+                    <p className="md:text-right text-center w-full md:px-6 px-0">
+                      Vendor appointed :- {assignedStatus?.vendor_name}
+                    </p>
                   ) : (
                     <Select
                       className="flex-1"
@@ -68,54 +72,12 @@ const ProjectDisplay = ({
                     </Select>
                   )}
                 </CardHeader>
-                <ScrollArea className={"h-48 w-ful"}>
-                  <CardContent>
-                    <p>
-                      Ancient manuscripts also divided sentences into paragraphs
-                      with line breaks (newline) followed by an initial at the
-                      beginning of the next paragraph. An initial is an
-                      oversized capital letter, sometimes outdented beyond the
-                      margin of the text. This style can be seen, for example,
-                      in the original Old English manuscript of Beowulf.
-                      Outdenting is still used in English typography, though not
-                      commonly.[2] Modern English typography usually indicates a
-                      new paragraph by indenting the first line. This style can
-                      be seen in the (handwritten) United States Constitution
-                      from 1787. For additional ornamentation, a hedera leaf or
-                      other symbol can be added to the inter-paragraph white
-                      space, or put in the indentation space. A second common
-                      modern English style is to use no indenting, but add
-                      vertical white space to create "block paragraphs." On a
-                      typewriter, a double carriage return produces a blank line
-                      for this purpose; professional typesetters (or word
-                      processing software) may put in an arbitrary vertical
-                      space by adjusting leading. This style is very common in
-                      electronic formats, such as on the World Wide Web and
-                      email. Wikipedia itself employs this format. Ancient
-                      manuscripts also divided sentences into paragraphs with
-                      line breaks (newline) followed by an initial at the
-                      beginning of the next paragraph. An initial is an
-                      oversized capital letter, sometimes outdented beyond the
-                      margin of the text. This style can be seen, for example,
-                      in the original Old English manuscript of Beowulf.
-                      Outdenting is still used in English typography, though not
-                      commonly.[2] Modern English typography usually indicates a
-                      new paragraph by indenting the first line. This style can
-                      be seen in the (handwritten) United States Constitution
-                      from 1787. For additional ornamentation, a hedera leaf or
-                      other symbol can be added to the inter-paragraph white
-                      space, or put in the indentation space. A second common
-                      modern English style is to use no indenting, but add
-                      vertical white space to create "block paragraphs." On a
-                      typewriter, a double carriage return produces a blank line
-                      for this purpose; professional typesetters (or word
-                      processing software) may put in an arbitrary vertical
-                      space by adjusting leading. This style is very common in
-                      electronic formats, such as on the World Wide Web and
-                      email. Wikipedia itself employs this format.
-                    </p>
-                  </CardContent>
-                </ScrollArea>
+                {/* -- create a component and pass 
+                show you can create task ones the worker accepts the request
+                */}
+                <CardContent>
+                  <TaskDisplayComp/>
+                </CardContent>
                 <CardFooter>
                   <p>{assignedStatus?.status}</p>
                 </CardFooter>

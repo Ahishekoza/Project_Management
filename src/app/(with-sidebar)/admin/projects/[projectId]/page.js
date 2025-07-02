@@ -4,15 +4,17 @@ import ProjectDisplay from "@/components/projectPageComp/projectDisplayComp";
 import { useProject } from "@/contexts/ProjectContext";
 import { useVendor } from "@/contexts/VendorContext";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function ProjectPage() {
   const { projectId } = useParams();
   const { projects, handleAssignToVendor, vendorAssignments } = useProject();
   const { handleAvailablevendorsPerProject, avaliableVendorList } = useVendor();
-
+  const [selectedProject, setSelectedProject] = useState()
   useEffect(() => {
     const selected = projects.find((p) => p?.id === Number(projectId));
+
+    setSelectedProject(selected)
 
     if (selected?.workers?.length > 0) {
       handleAvailablevendorsPerProject(selected.workers);
@@ -39,7 +41,7 @@ export default function ProjectPage() {
           <ProjectDisplay
             avaliableVendorList={avaliableVendorList}
             handleValueChange={handleValueChange}
-            projectId={projectId}
+            project={selectedProject}
             vendorAssignments={vendorAssignments}
           />
         ) : (

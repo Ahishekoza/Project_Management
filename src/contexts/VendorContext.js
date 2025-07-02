@@ -8,7 +8,7 @@ import { useAuth } from "./AuthContext";
 const VendorContext = createContext();
 
 export const VendorProvider = ({ children }) => {
-  const { projects, vendorAssignments, setVendorAssignments } = useProject();
+  const { vendorAssignments, setVendorAssignments } = useProject();
   const { user } = useAuth();
 
   //    ---- data format
@@ -20,11 +20,11 @@ export const VendorProvider = ({ children }) => {
   //         painter:[]
   //     }
   const [avaliableVendorList, setAvaliableVendorList] = useState();
-  const [vendorsData, setvendorsData] = useState();
+  const [vendorsData, setvendorsData] = useState(vendors);
 
     useEffect(() => {
     const storedVendors = localStorage.getItem("vendorData");
-    storedVendors ? setvendorsData(JSON.parse(storedVendors)) : setvendorsData(vendors);
+    storedVendors ? setvendorsData(JSON.parse(storedVendors)) : '';
   }, []);
 
   useEffect(() => {
