@@ -23,14 +23,13 @@ const ProjectDisplay = ({
   project,
   vendorAssignments,
 }) => {
-  console.log(project)
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
       {Object.entries(avaliableVendorList)
         .filter(([, vendors]) => vendors.length > 0)
         .map(([type, vendors], index) => {
           // --- checking the status and displaying
-          const assignedStatus = vendorAssignments.find(
+          const assignedVendor = vendorAssignments.find(
             (va) => va?.project_id === String(project?.id) && va?.vendor_type === type
           );
           return (
@@ -44,10 +43,10 @@ const ProjectDisplay = ({
                     <CardDescription>Maintain data for {type}</CardDescription>
                   </div>
                   {/* --- handle vendor selection */}
-                  {assignedStatus?.vendor_name !== null &&
-                  assignedStatus?.status === "accepted" ? (
+                  {assignedVendor?.vendor_name !== null &&
+                  assignedVendor?.status === "accepted" ? (
                     <p className="md:text-right text-center w-full md:px-6 px-0">
-                      Vendor appointed :- {assignedStatus?.vendor_name}
+                      Vendor appointed :- {assignedVendor?.vendor_name}
                     </p>
                   ) : (
                     <Select
@@ -76,10 +75,10 @@ const ProjectDisplay = ({
                 show you can create task ones the worker accepts the request
                 */}
                 <CardContent>
-                  <TaskDisplayComp/>
+                  <TaskDisplayComp vendor_type={assignedVendor?.vendor_type} project={project}/>
                 </CardContent>
                 <CardFooter>
-                  <p>{assignedStatus?.status}</p>
+                  <p>{assignedVendor?.status}</p>
                 </CardFooter>
               </Card>
             </>

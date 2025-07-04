@@ -32,7 +32,7 @@ export const VendorProvider = ({ children }) => {
   }, [vendorsData]);
 
   const handleAvailablevendorsPerProject = (projectWorkers) => {
-    console.log(projectWorkers)
+   
     // --- first get the all available vendors
     // --- list required types
     // --- data type

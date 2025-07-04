@@ -6,11 +6,12 @@ const ProjectContext = createContext();
 
 export const ProjectProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
-  const [projectNotification, setProjectNotification] = useState([]);
+  // -- create a state which will always watch status changes for the of the assigned vendor
+  // -- to notify the admin/designer
   const [clients, setClients] = useState([]);
   const [vendorAssignments, setVendorAssignments] = useState([]);
 
-  // Read localStorage only on client after mount
+  // --Projects
   useEffect(() => {
     const storedProjects = localStorage.getItem("projects");
     storedProjects ? setProjects(JSON.parse(storedProjects)) : setProjects([]);
@@ -20,6 +21,7 @@ export const ProjectProvider = ({ children }) => {
     localStorage.setItem("projects", JSON.stringify(projects));
   }, [projects]);
 
+  // --Clients
   useEffect(() => {
     const storedClients = localStorage.getItem("clients");
     if (storedClients) {
@@ -47,6 +49,7 @@ export const ProjectProvider = ({ children }) => {
       JSON.stringify(vendorAssignments)
     );
   }, [vendorAssignments]);
+
 
   const handleCreateClient = (clientData) => {
     const ispresent = clients.some(
@@ -112,7 +115,7 @@ export const ProjectProvider = ({ children }) => {
       project_id: projectId,
       vendor_id: vendorInfo?.id,
       status: "requested",
-      vendor_name:vendorInfo?.vendor_name,
+      vendor_name: vendorInfo?.vendor_name,
       vendor_type: vendorInfo?.vendor_type,
     };
 
@@ -124,7 +127,30 @@ export const ProjectProvider = ({ children }) => {
   };
 
   // --- Project will be send to vendors
-  const handleNotification = () => {};
+ const handleTaskCreation = (project_id, vendor_type, tasks) => {
+  const updatedProjects = projects.map((project) => {
+    if (project?.id === project_id) {
+      const updatedWorkers = project.workers.map((worker) => {
+        if ((worker?.type).toLowerCase() === vendor_type.toLowerCase()) {
+          return {
+            ...worker,
+            tasks, // assign new tasks
+          };
+        }
+        return worker;
+      });
+
+      return {
+        ...project,
+        workers: updatedWorkers,
+      };
+    }
+
+    return project;
+  });
+
+  setProjects(updatedProjects);
+};
 
   const value = {
     projects,
@@ -133,6 +159,7 @@ export const ProjectProvider = ({ children }) => {
     handleCreateClient,
     handleCreateProject,
     handleAssignToVendor,
+    handleTaskCreation,
   };
 
   return (
