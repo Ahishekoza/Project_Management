@@ -12,12 +12,11 @@ const TaskDisplayComp = ({ vendor_type, project }) => {
   const { handleTaskCreation } = useProject();
 
   const selectedWorker = project?.workers.find(
-    (worker) => (worker?.type).toLowerCase() === vendor_type.toLowerCase()
+    (worker) => (worker?.type)?.toLowerCase() === vendor_type?.toLowerCase()
   );
 
-
   const [tasks, setTasks] = useState(
-    selectedWorker?.tasks || [{id:1, description: "", imageUrl: "" }]
+    selectedWorker?.tasks || [{ id: 1, description: "", imageUrl: "" }]
   );
 
   const handleTaskChange = (index, field, value) => {
@@ -28,17 +27,16 @@ const TaskDisplayComp = ({ vendor_type, project }) => {
   const handleAddTask = () => {
     setTasks([...tasks, { description: "", imageUrl: "" }]);
   };
-  
+
   // --- After adding the task add the new task
   const handleSaveTask = () => {
     // -- project, workertype
-    handleTaskCreation(project?.id,vendor_type,tasks)
-   
+    handleTaskCreation(project?.id, vendor_type, tasks);
   };
 
-  const handleImageUpload=(index,file)=>{
-    console.log(file)
-  }
+  const handleImageUpload = (index, file) => {
+    console.log(file);
+  };
 
   return (
     <>
@@ -63,17 +61,19 @@ const TaskDisplayComp = ({ vendor_type, project }) => {
                 className="w-full resize-none p-2 border rounded"
               />
 
-              <Label htmlFor="imageLabel" className={"my-2 cursor-pointer"}>
-                Upload bills
-                <Image size={20} color="#804E49" />
-              </Label>
-              <Input
-                type="file"
-                id="imageLabel"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(index, e.target.files[0])}
-                className=" cursor-pointer hidden"
-              />
+              <div className="w-fit">
+                <Label htmlFor="imageLabel" className={"my-2 cursor-pointer"}>
+                  Upload bills
+                  <Image size={20} color="#804E49" />
+                </Label>
+                <Input
+                  type="file"
+                  id="imageLabel"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(index, e.target.files[0])}
+                  className=" cursor-pointer hidden"
+                />
+              </div>
 
               {task.imageUrl && (
                 <a

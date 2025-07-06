@@ -40,6 +40,8 @@ export default function Home() {
     const addRole = { ...data, role: "admin" };
     const { session,success } = login(addRole);
 
+    sessionStorage.setItem("showLoginToast",true)
+
     if (success) {
       switch (session?.user?.role) {
         case "admin":

@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProjectProvider } from "@/contexts/ProjectContext";
 import { VendorProvider } from "@/contexts/VendorContext";
+import { Toaster } from "@/components/ui/sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
           <ProjectProvider>
             <VendorProvider>
               <div className="font-mono">{children}</div>
+              <Toaster richColors/>
             </VendorProvider>
           </ProjectProvider>
         </AuthProvider>

@@ -99,7 +99,7 @@ export function CreateProjectDialog() {
     const clientData = { clientContact, clientEmail, clientName };
 
     const projectData = {
-      id:1,
+      id:2,
       project_name,
       project_type,
       clientName,
@@ -129,6 +129,7 @@ export function CreateProjectDialog() {
 
       
       handleDialogClose(false);
+      sessionStorage.setItem("showProjectCreationToast",true)
       router.push("/admin/dashboard")
     } catch (error) {
       console.error("Submission error:", error);
