@@ -51,7 +51,7 @@ import {
 import { getMonthDifference } from "@/app/helperfns/helperfunctions";
 import { useProject } from "@/contexts/ProjectContext";
 import { useRouter } from "next/navigation";
-
+import { RotateCw } from "@deemlol/next-icons";
 
 // ---- Type for form values ----
 
@@ -60,7 +60,8 @@ export function CreateProjectDialog() {
   const [isOpen, setisOpen] = useState(false);
   const [selectedWorkers, setSelectedWorkers] = useState([]);
   const { handleCreateClient, handleCreateProject } = useProject();
-  const router =  useRouter()
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(createProjectSchema),
@@ -80,8 +81,8 @@ export function CreateProjectDialog() {
     },
   });
 
-
-  const handleOnSubmit = (data) => {
+  const handleOnSubmit = async (data) => {
+    setIsSendingEmail(true)
     const {
       clientEmail,
       clientContact,
@@ -96,10 +97,16 @@ export function CreateProjectDialog() {
     const { from, to } = dateRange;
     const project_period = getMonthDifference(from, to);
 
-    const clientData = { clientContact, clientEmail, clientName };
+    // --- there will be no client schema and vendor schema everyone will be saved in user with different role
+    const clientData = {
+      clientContact,
+      clientEmail,
+      clientName,
+      role: "client",
+    };
 
     const projectData = {
-      id:2,
+      id: 2,
       project_name,
       project_type,
       clientName,
@@ -107,7 +114,7 @@ export function CreateProjectDialog() {
       workers,
       dateRange,
       project_period,
-      status:"not_started"
+      status: "not_started",
     };
 
     try {
@@ -125,15 +132,33 @@ export function CreateProjectDialog() {
         return;
       }
 
-      alert("Client and project created successfully.");
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: `${clientData.clientName}`,
+          email: `${clientData?.clientEmail}`,
+          message: `Now you can track your project process on PM . Use the below \n\n email-id and password for login .\n\n Email : ${clientData.clientEmail} Password:AbhishekOza`,
+        }),
+      });
 
-      
-      handleDialogClose(false);
-      sessionStorage.setItem("showProjectCreationToast",true)
-      router.push("/admin/dashboard")
+      if (response.ok) {
+        setIsSendingEmail(false)
+
+        await new Promise(resolve=> setTimeout(resolve,300))
+
+        handleDialogClose(false);
+        sessionStorage.setItem("showProjectCreationToast", true);
+        router.push("/admin/dashboard");
+      }
     } catch (error) {
       console.error("Submission error:", error);
       alert("Something went wrong. Please try again.");
+    }
+    finally{
+      setIsSendingEmail(false)
     }
   };
 
@@ -170,7 +195,6 @@ export function CreateProjectDialog() {
       setSelectedWorkers([]);
     }
     setisOpen(open);
-    
   };
 
   return (
@@ -181,7 +205,15 @@ export function CreateProjectDialog() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-4xl max-h-[90vh]">
+      <DialogContent className="max-w-4xl max-h-[90vh] ">
+        {isSendingEmail && (
+          <div className=" absolute inset-0  z-10 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-2">
+              <RotateCw size={24} className="animate-spin" />
+              <p className="text-sm">Sending email...</p>
+            </div>
+          </div>
+        )}
         <DialogHeader>
           <DialogTitle className="text-3xl py-3">
             {step === "client" ? "Client Information" : "Project Information"}

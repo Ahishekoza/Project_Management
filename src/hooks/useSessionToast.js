@@ -7,7 +7,7 @@ import { toast } from "sonner"
 
 const toastKeys = {
     showLoginToast : "User Logged In Successfully",
-    showProjectCreationToast: "Project Created Successfully"
+    showProjectCreationToast: "Project Created and Email Sent to Client Successfully"
 }
 
 const useSessionToast = () => {
