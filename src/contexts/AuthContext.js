@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useContext, createContext, useEffect, useState } from "react";
 
@@ -13,88 +14,84 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const router = useRouter();
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-  };
+  const login = async (userData) => {
+    try {
+      setLoading(true);
 
-  const setCookie = (name, value, minutes = 10) => {
-    const expires = new Date();
-    expires.setMinutes(expires.getMinutes() + minutes);
-    document.cookie = `${name}=${encodeURIComponent(
-      value
-    )}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
-  };
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
 
-  const removeCookie = (name) => {
-    document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-  };
+      const data = await response.json();
 
-  const createSession = (userData, expirationMinutes = 10) => {
-    const expiresAt = new Date();
-    expiresAt.setMinutes(expiresAt.getMinutes() + expirationMinutes);
-
-    const session = {
-      user: userData,
-      expiresAt: expiresAt.toISOString(), // ✅ call the function
-    };
-
-    setCookie("auth-session", JSON.stringify(session), expirationMinutes);
-    setUser(userData);
-    return { session, success: true };
-  };
-
- const checkSession = () => {
-  const cookie = getCookie("auth-session");
-
-  if (!cookie) {
-    logout();
-    setLoading(false);
-    return;
-  }
-
-  try {
-    const session = JSON.parse(decodeURIComponent(cookie));
-    const now = new Date();
-    const expiresAt = new Date(session.expiresAt);
-
-    if (now > expiresAt) {
-      logout();
-    } else {
-      setUser(session.user);
-      // Renew session if <2 minutes left
-      if (expiresAt - now < 2 * 60 * 1000) {
-        createSession(session.user);
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
       }
+
+      setUser(data.user);
+      return { success: true, user: data.user };
+    } catch (error) {
+      console.error("Login error:", error);
+      return { success: false, message: error.message };
+    } finally {
+      setLoading(false);
     }
-  } catch (e) {
-    logout();
-  } finally {
-    setLoading(false);
+  };
+
+  const logout = async () => {
+    const response = await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include"
+    })
+
+    const { success } = await response.json()
+    if (success) {
+      setUser(null);
+      sessionStorage.setItem("showLogoutToast", true)
+      router.replace("/");
+    }
+
+
+  };
+
+  const checkSession = async () => {
+    setLoading(true)
+    try {
+
+      const response = await fetch("/api/auth/session", {
+        method: "GET",
+        credentials: "include"
+      })
+
+      if (response.status === 200) {
+        // ---Add Parameter IsAuthenticated
+      }
+      else {
+        sessionStorage.setItem("showSessionExpired", true)
+        logout()
+      }
+    } catch (error) {
+      sessionStorage.setItem("showSessionExpired", true)
+      logout()
+    }
+    finally {
+      setLoading(false)
+    }
   }
-};
-  const login = (userData) => {
-    return createSession(userData);
-  };
 
-  const logout = () => {
-    removeCookie("auth-session");
-    setUser(null);
-    router.replace("/");
-  };
 
-  // Initial Check
   useEffect(() => {
-    checkSession();
-  }, []);
+    const interval = setInterval(() => checkSession(), 5 * 60 * 1000)
+    
+    // ---initial check on mount 
+    checkSession()
 
-  // Periodic check
-  useEffect(() => {
-    const interval = setInterval(() => checkSession(), 60000);
-
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearInterval(interval)
+  }, [])
 
   const value = {
     user,

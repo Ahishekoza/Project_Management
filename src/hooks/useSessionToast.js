@@ -6,19 +6,27 @@ import { toast } from "sonner"
 
 
 const toastKeys = {
-    showLoginToast : "User Logged In Successfully",
-    showProjectCreationToast: "Project Created and Email Sent to Client Successfully"
+  showLoginToast: "User Logged In Successfully",
+  showLogoutToast: "User Logged Out !",
+  showProjectCreationToast: "Project Created and Email Sent to Client Successfully",
+  showSessionExpired: "Session got expired!"
 }
 
 const useSessionToast = () => {
-  useEffect(()=>{
-    Object.entries(toastKeys).forEach(([key,message])=>{
-        if(sessionStorage.getItem(key)){
-            toast.success(message)
-            sessionStorage.removeItem(key)
+  useEffect(() => {
+    Object.entries(toastKeys).forEach(([key, message]) => {
+      if (sessionStorage.getItem(key)) {
+        if (key === "showSessionExpired" || key === "showLogoutToast") {
+          toast.error(message)
         }
+        else {
+
+          toast.success(message)
+        }
+        sessionStorage.removeItem(key)
+      }
     })
-  },[])
+  }, [])
 }
 
 export default useSessionToast

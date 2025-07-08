@@ -18,7 +18,7 @@ export const NavLinks = () => {
 
   const handleNavigations = () => {
     if (user) {
-      switch (user.role) {
+      switch (user?.role) {
         case "admin":
           return authNavgations;
         case "vendor":
@@ -30,15 +30,15 @@ export const NavLinks = () => {
     return [];
   };
 
-  const navigations = handleNavigations();
+   
 
   // ---create a skeleton component for loading
-  if (loading) {
+  if (loading && !user) {
     return (
       <div className="bg-[#804E49] font-mono md:rounded-tr-sm md:rounded-br-sm h-24 md:h-full flex flex-row md:flex-col gap-4 p-2">
         <div className="flex-grow">
           <ul className="h-full flex flex-row md:flex-col items-center md:py-20 gap-4 md:gap-8">
-            {navigations.map((_, index) => (
+            {handleNavigations().map((_, index) => (
               <li className="w-full" key={index}>
                 <div className="flex items-center p-3 justify-center md:justify-start gap-3">
                   <Skeleton className="h-6 w-6 bg-muted" />
@@ -67,7 +67,7 @@ export const NavLinks = () => {
     <div className="bg-[#804E49] font-mono md:rounded-tr-sm md:rounded-br-sm h-24 md:h-full flex flex-row md:flex-col gap-4 p-2">
       <div className="flex-grow">
         <ul className="h-full flex flex-row md:flex-col items-center md:py-20 gap-4 md:gap-8">
-          {navigations.map((authNav) => {
+          {handleNavigations().map((authNav) => {
             const isActive = pathname === authNav.link;
             return (
               <li className="w-full" key={authNav.link}>

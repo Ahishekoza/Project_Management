@@ -4,6 +4,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProjectProvider } from "@/contexts/ProjectContext";
 import { VendorProvider } from "@/contexts/VendorContext";
 import { Toaster } from "@/components/ui/sonner";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -20,19 +21,20 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <ProjectProvider>
-            <VendorProvider>
-              <div className="font-mono">{children}</div>
-              <Toaster richColors/>
-            </VendorProvider>
-          </ProjectProvider>
-        </AuthProvider>
+          <AuthProvider>
+            <ProjectProvider>
+              <VendorProvider>
+                <div className="font-mono">{children}</div>
+                <Toaster richColors />
+              </VendorProvider>
+            </ProjectProvider>
+          </AuthProvider>
       </body>
     </html>
   );

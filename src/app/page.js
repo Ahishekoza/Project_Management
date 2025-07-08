@@ -24,10 +24,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useAuth } from "@/contexts/AuthContext";
+import useSessionToast from "@/hooks/useSessionToast";
 
 export default function Home() {
   const router = useRouter();
-  const {  login } = useAuth();
+  const {  login ,loading } = useAuth();
+  useSessionToast()
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -36,14 +38,14 @@ export default function Home() {
     },
   });
 
-  const handleLogin = (data) => {
-    const addRole = { ...data, role: "admin" };
-    const { session,success } = login(addRole);
+  const handleLogin = async(data) => {
+    const { user,success } = await login(data);
 
+    // ---This will storage the toast session and will show on required page
     sessionStorage.setItem("showLoginToast",true)
 
-    if (success) {
-      switch (session?.user?.role) {
+    if (success ) {
+      switch (user?.role) {
         case "admin":
           router.push("/admin/dashboard");
           break;

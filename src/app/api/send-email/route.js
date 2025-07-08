@@ -2,11 +2,11 @@
 import nodemailer from 'nodemailer';
 import { NextResponse } from 'next/server';
 
-export async function POST(request) {
+export async function POST(req) {
   try {
-    const { name, email, message } = await request.json();
+    const { name, email, message } = await req.json();
 
-    
+
 
     // Validate input
     if (!name || !email || !message) {
@@ -20,15 +20,15 @@ export async function POST(request) {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'abhishekoza11@gmail.com',
-        pass: 'sppk otzj sbps jtvu'
+        user: String(process.env.EMAIL_USER),
+        pass: String(process.env.EMAIL_PASS),
       },
-      secure:true
+      secure: true
     });
 
     // Email options
     const mailOptions = {
-      from: `"${name}" 'abhishekoza11@gmail.com'`,
+      from: `"${name}" <${process.env.EMAIL_USER}>`,
       to: email,
       replyTo: email, // So you can reply directly to the sender
       subject: `New message from ${name}`,
@@ -53,9 +53,9 @@ export async function POST(request) {
   } catch (error) {
     console.error('Error sending email:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error.message || 'Failed to send email' 
+      {
+        success: false,
+        error: error.message || 'Failed to send email'
       },
       { status: 500 }
     );

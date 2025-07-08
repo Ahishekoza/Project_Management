@@ -1,32 +1,35 @@
 // middleware.ts
 
+import { verifyToken } from "@/lib/jwt";
 import { NextResponse } from "next/server";
 
 
-export function middleware(request) {
-  const cookie = request.cookies.get("auth-session")?.value;
+export  function middleware(request) {
+  const token = request.cookies.get("auth-session")?.value;
 
-  if (!cookie || cookie === null) {
-    return NextResponse.redirect(new URL("/unauthorized", request.url));
+  if (!token || token === null) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   try {
-    const session = JSON.parse(decodeURIComponent(cookie));
-    const { user } = session;
+    const session =  verifyToken(token)
+    const { role } = session;
 
     // check admin role for admin routes
-    if (request.nextUrl.pathname.startsWith("/admin") && user?.role !== "admin") {
+    if (request.nextUrl.pathname.startsWith("/admin") && role !== "admin") {
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
 
     // vendor role check
-    if (request.nextUrl.pathname.startsWith("/vendor") && user?.role !== "vendor") {
+    if (request.nextUrl.pathname.startsWith("/vendor") && role !== "vendor") {
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
 
     return NextResponse.next();
   } catch (e) {
-    return NextResponse.redirect(new URL("/unauthorized", request.url));
+    const response = NextResponse.redirect(new URL("/", request.url));
+    response.cookies.delete("auth-session")
+    return response
   }
 }
 

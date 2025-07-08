@@ -1,11 +1,11 @@
 import JWT from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET_KEY;
+const JWT_SECRET = String(process.env.JWT_SECRET_KEY);
 
-export const generateToken = (payload) => {
-  return JWT.sign(payload, JWT_SECRET, { expiresIn: "1d" });
+export const generateToken =async (payload) => {
+  return await JWT.sign(payload, JWT_SECRET, { expiresIn: "1d" });
 };
 
-export const verifyToken = (token) => {
-  return JWT.verify(token, JWT_SECRET);
+export const verifyToken = async(token) => {
+  return await JWT.verify(token, JWT_SECRET);
 };
