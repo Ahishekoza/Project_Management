@@ -9,21 +9,22 @@ const toastKeys = {
   showLoginToast: "User Logged In Successfully",
   showLogoutToast: "User Logged Out !",
   showProjectCreationToast: "Project Created and Email Sent to Client Successfully",
-  showSessionExpired: "Session got expired!"
+  showSessionExpired: "Session got expired!",
 }
 
 const useSessionToast = () => {
   useEffect(() => {
     Object.entries(toastKeys).forEach(([key, message]) => {
       if (sessionStorage.getItem(key)) {
-        if (key === "showSessionExpired" || key === "showLogoutToast") {
+        if (key === "showSessionExpired" || key === "showLogoutToast" || key === "showUserNotPresent") {
           toast.error(message)
+          sessionStorage.removeItem(key)
         }
         else {
 
           toast.success(message)
+          sessionStorage.removeItem(key)
         }
-        sessionStorage.removeItem(key)
       }
     })
   }, [])

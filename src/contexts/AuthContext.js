@@ -1,8 +1,8 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useContext, createContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 // --- login and logout function
 // --- check session function and renew session before 2 minutes of expiration
@@ -27,9 +27,10 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+      console.log(data)
+      if (!response.ok  ) {
+        data?.error === "password"? toast.error("Incorrect Password!") :toast.error("User Not Present!!")
+        return { success: false, user: null }; 
       }
 
       setUser(data.user);
@@ -57,41 +58,47 @@ export const AuthProvider = ({ children }) => {
 
 
   };
-
-  const checkSession = async () => {
-    setLoading(true)
+  const checkSession = async (isInitialCheck = false) => {
+    setLoading(true);
     try {
-
       const response = await fetch("/api/auth/session", {
         method: "GET",
         credentials: "include"
-      })
+      });
+
+      const{user} = await response.json()
 
       if (response.status === 200) {
         // ---Add Parameter IsAuthenticated
+        setUser(user)
       }
       else {
-        sessionStorage.setItem("showSessionExpired", true)
-        logout()
+        // Only logout and store session if it's not the initial check
+        if (!isInitialCheck) {
+          sessionStorage.setItem("showSessionExpired", true);
+          logout();
+        }
       }
     } catch (error) {
-      sessionStorage.setItem("showSessionExpired", true)
-      logout()
+      // Only logout and store session if it's not the initial check
+      if (!isInitialCheck) {
+        sessionStorage.setItem("showSessionExpired", true);
+        logout();
+      }
     }
     finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
-
   useEffect(() => {
-    const interval = setInterval(() => checkSession(), 5 * 60 * 1000)
-    
-    // ---initial check on mount 
-    checkSession()
+    const interval = setInterval(() => checkSession(), 5 * 60 * 1000);
 
-    return () => clearInterval(interval)
-  }, [])
+
+    checkSession(true);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const value = {
     user,

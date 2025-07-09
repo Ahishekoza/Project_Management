@@ -15,21 +15,31 @@ export async function POST(req) {
     try {
         const { email, password } = await req.json()
         const userDetails = await UserSchema.findOne({ $or: [{ email: email }, { contactNumber: email }] })
-        let validPassword
-        let token
-        if (userDetails?._id) {
-            validPassword = await comparePassword(password, userDetails?.password)
+
+        if (!userDetails) {
+            return NextResponse.json({
+                success: false,
+                error:"userNotPresent"
+            }, { status: 404 })
         }
 
-        if (validPassword) {
-            const payload = {
-                id: userDetails?._id,
-                role: userDetails?.role,
-                email: userDetails?.email,
-                name: userDetails?.name,
-            }
-            token = await generateToken(payload)
+
+        const validPassword = await comparePassword(password, userDetails?.password)
+        if (!validPassword) {
+            return NextResponse.json({
+                success: false,
+                error:"password"
+            }, { status: 404 })
         }
+
+
+        const payload = {
+            id: userDetails?._id,
+            role: userDetails?.role,
+            email: userDetails?.email,
+            name: userDetails?.name,
+        }
+        const token = await generateToken(payload)
 
         const response = NextResponse.json({
             success: true,

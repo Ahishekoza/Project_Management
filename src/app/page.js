@@ -28,7 +28,7 @@ import useSessionToast from "@/hooks/useSessionToast";
 
 export default function Home() {
   const router = useRouter();
-  const {  login ,loading } = useAuth();
+  const { login, loading } = useAuth();
   useSessionToast()
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -38,13 +38,18 @@ export default function Home() {
     },
   });
 
-  const handleLogin = async(data) => {
-    const { user,success } = await login(data);
+  const handleLogin = async (data) => {
+    const { user, success } = await login(data);
 
     // ---This will storage the toast session and will show on required page
-    sessionStorage.setItem("showLoginToast",true)
+    if(!success){
+      // ---reset the form and empty the fields
+      form.reset()
+      return
+    }
 
-    if (success ) {
+    if (success) {
+      sessionStorage.setItem("showLoginToast", true)
       switch (user?.role) {
         case "admin":
           router.push("/admin/dashboard");
@@ -121,9 +126,9 @@ export default function Home() {
               <Button type="submit" className="w-full cursor-pointer">
                 Login
               </Button>
-              <Button variant="outline" className="w-full">
+              {/* <Button variant="outline" className="w-full">
                 Login with Google
-              </Button>
+              </Button> */}
             </CardFooter>
           </Card>
         </form>

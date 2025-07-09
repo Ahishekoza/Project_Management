@@ -4,15 +4,19 @@ import { verifyToken } from "@/lib/jwt";
 import { NextResponse } from "next/server";
 
 
-export  function middleware(request) {
+export async  function middleware(request) {
   const token = request.cookies.get("auth-session")?.value;
+  console.log(token)
 
-  if (!token || token === null) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
+  console.log(request.nextUrl)
+
+  // if (!token || token === null) {
+  //   return NextResponse.redirect(new URL("/", request.url));
+  // }
 
   try {
-    const session =  verifyToken(token)
+    const session = await verifyToken(token)
+    console.log(session,"middleware")
     const { role } = session;
 
     // check admin role for admin routes

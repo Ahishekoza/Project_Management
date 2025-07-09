@@ -43,7 +43,6 @@ import {
 } from "@/components/ui/form";
 
 import {
-  availableDesigners,
   createProjectSchema,
   projectType,
   workers,
@@ -52,6 +51,8 @@ import { getMonthDifference } from "@/app/helperfns/helperfunctions";
 import { useProject } from "@/contexts/ProjectContext";
 import { useRouter } from "next/navigation";
 import { RotateCw } from "@deemlol/next-icons";
+import useGetHook from "@/hooks/useGetHook";
+import { toast } from "sonner";
 
 // ---- Type for form values ----
 
@@ -62,6 +63,17 @@ export function CreateProjectDialog() {
   const { handleCreateClient, handleCreateProject } = useProject();
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const router = useRouter();
+
+  // --- Fetching Designers [available-Designers]
+  const {
+    data: availableDesigners,
+    loading:designersLoading,
+    error:designersError,
+  } = useGetHook("/api/user?role=designer");
+  console.log(availableDesigners);
+  if (designersError) {
+    toast.error(designersError);
+  }
 
   const form = useForm({
     resolver: zodResolver(createProjectSchema),
@@ -82,7 +94,7 @@ export function CreateProjectDialog() {
   });
 
   const handleOnSubmit = async (data) => {
-    setIsSendingEmail(true)
+    setIsSendingEmail(true);
     const {
       clientEmail,
       clientContact,
@@ -145,9 +157,9 @@ export function CreateProjectDialog() {
       });
 
       if (response.ok) {
-        setIsSendingEmail(false)
+        setIsSendingEmail(false);
 
-        await new Promise(resolve=> setTimeout(resolve,300))
+        await new Promise((resolve) => setTimeout(resolve, 300));
 
         handleDialogClose(false);
         sessionStorage.setItem("showProjectCreationToast", true);
@@ -156,9 +168,8 @@ export function CreateProjectDialog() {
     } catch (error) {
       console.error("Submission error:", error);
       alert("Something went wrong. Please try again.");
-    }
-    finally{
-      setIsSendingEmail(false)
+    } finally {
+      setIsSendingEmail(false);
     }
   };
 
@@ -333,8 +344,8 @@ export function CreateProjectDialog() {
                           <SelectContent>
                             {availableDesigners.map((designer) => (
                               <SelectItem
-                                key={designer.value}
-                                value={designer.value}
+                                key={designer?._id}
+                                value={designer?._id}
                               >
                                 {designer.name}
                               </SelectItem>
