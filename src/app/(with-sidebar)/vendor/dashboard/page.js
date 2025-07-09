@@ -27,7 +27,7 @@ const Dashboard = () => {
     <div>
       <DataTable
         columns={columns}
-        data={requestsData}
+        data={requestsData || []}
         isRoute={false}
       />
     </div>

@@ -76,8 +76,8 @@ export const AuthProvider = ({ children }) => {
         // Only logout and store session if it's not the initial check
         if (!isInitialCheck) {
           sessionStorage.setItem("showSessionExpired", true);
-          logout();
         }
+        logout();
       }
     } catch (error) {
       // Only logout and store session if it's not the initial check

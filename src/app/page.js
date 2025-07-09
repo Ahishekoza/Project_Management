@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { loginSchema } from "./constants/utils";
+
 import {
   Form,
   FormControl,
@@ -25,11 +25,14 @@ import {
 } from "@/components/ui/form";
 import { useAuth } from "@/contexts/AuthContext";
 import useSessionToast from "@/hooks/useSessionToast";
+import { loginSchema } from "./helperfns/zodSchema";
+import { Loader2 } from "lucide-react";
+import { RotateCcw, RotateCw } from "@deemlol/next-icons";
 
 export default function Home() {
   const router = useRouter();
   const { login, loading } = useAuth();
-  useSessionToast()
+  useSessionToast();
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -42,14 +45,14 @@ export default function Home() {
     const { user, success } = await login(data);
 
     // ---This will storage the toast session and will show on required page
-    if(!success){
+    if (!success) {
       // ---reset the form and empty the fields
-      form.reset()
-      return
+      form.reset();
+      return;
     }
 
     if (success) {
-      sessionStorage.setItem("showLoginToast", true)
+      sessionStorage.setItem("showLoginToast", true);
       switch (user?.role) {
         case "admin":
           router.push("/admin/dashboard");
@@ -71,6 +74,11 @@ export default function Home() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleLogin)}>
+          {loading && (
+            <div className=" absolute z-10 flex justify-center items-center inset-0 ">
+              <RotateCw size={36} className=" w-8 h-8 text-primary" />
+            </div>
+          )}
           <Card className="w-full max-w-sm md:max-w-md md:min-w-[28rem] min-w-[24rem]">
             <CardHeader>
               <CardTitle>Login to your account</CardTitle>
@@ -123,12 +131,16 @@ export default function Home() {
               </div>
             </CardContent>
             <CardFooter className="flex-col gap-2">
-              <Button type="submit" className="w-full cursor-pointer">
-                Login
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (
+                  <div className="flex items-center gap-2 justify-center">
+                    <RotateCw className="animate-spin w-4 h-4" />
+                    Logging in...
+                  </div>
+                ) : (
+                  "Login"
+                )}
               </Button>
-              {/* <Button variant="outline" className="w-full">
-                Login with Google
-              </Button> */}
             </CardFooter>
           </Card>
         </form>

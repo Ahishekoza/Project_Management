@@ -1,4 +1,0 @@
-1 RootLayout will be divided in to parts left part which will be fixed and my scroll down of data 
-on the first page is more
-2 width of the left side will be fixed and when seen from mobile screen navigations will be horizontal and scrollable
-3 Content on right side will be dynamic and will change on the route change 

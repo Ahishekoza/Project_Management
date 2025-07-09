@@ -43,7 +43,6 @@ import {
 } from "@/components/ui/form";
 
 import {
-  createProjectSchema,
   projectType,
   workers,
 } from "@/app/constants/utils";
@@ -53,6 +52,7 @@ import { useRouter } from "next/navigation";
 import { RotateCw } from "@deemlol/next-icons";
 import useGetHook from "@/hooks/useGetHook";
 import { toast } from "sonner";
+import { createProjectSchema } from "@/app/helperfns/zodSchema";
 
 // ---- Type for form values ----
 

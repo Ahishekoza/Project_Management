@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { vendorType } from "@/app/constants/utils";
+import { ScrollArea } from "../ui/scroll-area";
 
 const CreateVendorDialog = () => {
   return (
@@ -49,21 +50,27 @@ const CreateVendorDialog = () => {
                     <SelectValue placeholder="Theme" />
                   </SelectTrigger>
                   <SelectContent>
-                    {vendorType?.map((vendor_type) => (
-                      <SelectItem
-                        value={vendor_type?.value}
-                        key={vendor_type?.type}
-                      >
-                        {vendor_type?.type}
-                      </SelectItem>
-                    ))}
+                    <ScrollArea className={" h-16"}>
+                      {vendorType?.map((vendor_type) => (
+                        <SelectItem
+                          value={vendor_type?.value}
+                          key={vendor_type?.type}
+                        >
+                          {vendor_type?.type}
+                        </SelectItem>
+                      ))}
+                    </ScrollArea>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="grid gap-3">
               <label htmlFor="phonenumber">Contact No.</label>
-              <Input  id="phonenumber" name="phonenumber" placeholder="+91-123456789" />
+              <Input
+                id="phonenumber"
+                name="phonenumber"
+                placeholder="+91-123456789"
+              />
             </div>
           </div>
           <DialogFooter>
