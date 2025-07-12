@@ -15,21 +15,22 @@ const Dashboard = () => {
 
   useSessionToast()
 
-  useEffect(() => {
-    if (!loading && user?.email) {
-      const requests = handleProjectRequest();
-      setRequestsData(requests);
-    }
-  }, [loading, user,requestsData]);
+  // useEffect(() => {
+  //   if (!loading && user?.email) {
+  //     const requests = handleProjectRequest();
+  //     setRequestsData(requests);
+  //   }
+  // }, [loading, user,requestsData]);
 
 
   return (
     <div>
-      <DataTable
+      <p>Vendor Logged In {user?.name}</p>
+      {/* <DataTable
         columns={columns}
         data={requestsData || []}
         isRoute={false}
-      />
+      /> */}
     </div>
   );
 };

@@ -76,20 +76,20 @@ export default function Home() {
         <form onSubmit={form.handleSubmit(handleLogin)}>
           {loading && (
             <div className=" absolute z-10 flex justify-center items-center inset-0 ">
-              <RotateCw size={36} className=" w-8 h-8 text-primary" />
+              <RotateCw size={36} className=" animate-spin w-8 h-8 text-primary" />
             </div>
           )}
           <Card className="w-full max-w-sm md:max-w-md md:min-w-[28rem] min-w-[24rem]">
             <CardHeader>
               <CardTitle>Login to your account</CardTitle>
               <CardDescription>
-                Enter your email below to login to your account
+                Enter your email or Phone No. below to login to your account
               </CardDescription>
-              <CardAction>
+              {/* <CardAction>
                 <Button variant="link" onClick={() => router.push("/signup")}>
                   Sign Up
                 </Button>
-              </CardAction>
+              </CardAction> */}
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-6">
@@ -98,9 +98,9 @@ export default function Home() {
                   name="email"
                   render={({ field }) => (
                     <FormItem className="grid gap-2">
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Email/Phone No.</FormLabel>
                       <FormControl>
-                        <Input placeholder="m@example.com" {...field} />
+                        <Input placeholder="m@example.com/7841...87" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

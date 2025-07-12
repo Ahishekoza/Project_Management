@@ -1,44 +1,47 @@
-import { useEffect, useState } from "react";
+
+import { useAuth } from "@/contexts/AuthContext";
+import { useCallback, useEffect, useState } from "react";
 
 const useGetHook = (api) => {
-  const [data, setData] = useState(null); // default to null or []
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // optional for error handling
+  const [error, setError] = useState(null);
+ const {user} = useAuth()
 
-  useEffect(() => {
-    if (!api) return;
+  const fetchData = useCallback(async () => {
+    if (!api ) return;
 
-    const handleGetData = async () => {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      try {
-        const response = await fetch(api, {
-          method: "GET",
-          credentials: "include",
-        });
+    try {
+      const response = await fetch(api, {
+        method: "GET",
+        credentials: "include",
+      });
 
-        const resData = await response.json();
+      const resData = await response.json();
 
-        console.log("resData",resData)
-
-        if (!resData.success) {
-          throw new Error("Unable to fetch data"); // handle error via try-catch
-        }
-
-        setData(resData.data);
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError(err.message || "Something went wrong");
-      } finally {
-        setLoading(false);
+      if (!resData.success) {
+        throw new Error(resData.message || "Unable to fetch data");
       }
-    };
 
-    handleGetData();
+      setData(resData.data);
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   }, [api]);
 
-  return { data, loading, error };
+  useEffect(()=>{
+    if(user){
+      fetchData()
+    }
+  },[user])
+
+  return { data, loading, error, refetch: fetchData };
 };
 
 export default useGetHook;

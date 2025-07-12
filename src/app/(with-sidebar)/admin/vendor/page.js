@@ -1,6 +1,5 @@
 "use client";
 
-import { vendors } from "@/app/constants/dummyData";
 import { columnsVendors } from "@/app/constants/utils";
 import { DataTable } from "@/components/dataTable";
 import CreateVendorDialog from "@/components/vendorPageComp/createVendorDialog";

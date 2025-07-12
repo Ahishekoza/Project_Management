@@ -36,7 +36,6 @@ export async function GET(request) {
       matchQuery = {
         role: roleParam,
         _id: { $ne: session.id }, // exclude self
-        availabilityStatus: true,
       };
     } else {
       return NextResponse.json(

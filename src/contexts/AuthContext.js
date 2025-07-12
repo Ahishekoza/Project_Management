@@ -11,7 +11,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState();
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const login = async (userData) => {
@@ -27,10 +27,12 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await response.json();
-      console.log(data)
-      if (!response.ok  ) {
-        data?.error === "password"? toast.error("Incorrect Password!") :toast.error("User Not Present!!")
-        return { success: false, user: null }; 
+      console.log(data);
+      if (!response.ok) {
+        data?.error === "password"
+          ? toast.error("Incorrect Password!")
+          : toast.error("User Not Present!!");
+        return { success: false, user: null };
       }
 
       setUser(data.user);
@@ -46,38 +48,35 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     const response = await fetch("/api/auth/logout", {
       method: "POST",
-      credentials: "include"
-    })
+      credentials: "include",
+    });
 
-    const { success } = await response.json()
+    const { success } = await response.json();
     if (success) {
       setUser(null);
-      sessionStorage.setItem("showLogoutToast", true)
+      sessionStorage.setItem("showLogoutToast", true);
       router.replace("/");
     }
-
-
   };
   const checkSession = async (isInitialCheck = false) => {
     setLoading(true);
     try {
       const response = await fetch("/api/auth/session", {
         method: "GET",
-        credentials: "include"
+        credentials: "include",
       });
 
-      const{user} = await response.json()
+      const { user } = await response.json();
 
       if (response.status === 200) {
         // ---Add Parameter IsAuthenticated
-        setUser(user)
-      }
-      else {
+        setUser(user);
+      } else {
         // Only logout and store session if it's not the initial check
         if (!isInitialCheck) {
           sessionStorage.setItem("showSessionExpired", true);
+          logout();
         }
-        logout();
       }
     } catch (error) {
       // Only logout and store session if it's not the initial check
@@ -85,15 +84,13 @@ export const AuthProvider = ({ children }) => {
         sessionStorage.setItem("showSessionExpired", true);
         logout();
       }
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => checkSession(), 5 * 60 * 1000);
-
 
     checkSession(true);
 
@@ -104,7 +101,7 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     logout,
-    loading
+    loading,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

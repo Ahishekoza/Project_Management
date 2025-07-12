@@ -19,38 +19,107 @@ import {
 } from "@/components/ui/select";
 import { vendorType } from "@/app/constants/utils";
 import { ScrollArea } from "../ui/scroll-area";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { vendorSchema } from "@/app/helperfns/zodSchema";
+import { useState } from "react";
+import { useVendor } from "@/contexts/VendorContext";
+import { RotateCw } from "@deemlol/next-icons";
 
 const CreateVendorDialog = () => {
-  return (
-    <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Button variant="default">Register Vendor</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]   border-none">
-          <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="grid gap-3">
-                <label htmlFor="name-1">Name</label>
-                <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
-              </div>
+  const [isOpen, setIsOpen] = useState(false);
+  const { handleVendorCreation, isLoading } = useVendor();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm({
+    resolver: zodResolver(vendorSchema),
+    mode: "onTouched",
+    defaultValues: {
+      email: "",
+      name: "",
+      vendorType: "",
+      contactNumber: "",
+    },
+  });
 
-              {/* ---vendor Type */}
-              <div className="grid gap-3 ">
+  const handleOnSubmit = async (data) => {
+    const { success } = await handleVendorCreation(data);
+    if (success) {
+      handleDialogClose();
+    }
+  };
+
+  const handleDialogClose = (open) => {
+    if (!open) {
+      reset();
+    }
+    setIsOpen(open);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleDialogClose}>
+      <DialogTrigger asChild>
+        <Button variant="default" onClick={() => setIsOpen(true)}>
+          Register Vendor
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px] border-none">
+        {isLoading && (
+          <div className=" absolute z-10 flex justify-center items-center inset-0 ">
+            <RotateCw
+              size={36}
+              className=" animate-spin w-8 h-8 text-primary"
+            />
+          </div>
+        )}
+        <DialogHeader>
+          <DialogTitle>Register Vendor</DialogTitle>
+          <DialogDescription>
+            Enter vendor details here. Click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit(handleOnSubmit)}>
+          <div className="grid gap-4 mb-3">
+            <div className="grid gap-3">
+              <label htmlFor="email">Email</label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div className="grid gap-3">
+              <label htmlFor="name">Name</label>
+              <Input
+                id="name"
+                placeholder="Enter your name"
+                {...register("name")}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div className="grid gap-3">
                 <label>Vendor Type</label>
-                <Select>
-                  <SelectTrigger className="w-full md:w-[180px]">
-                    <SelectValue placeholder="Theme" />
+                <Select
+                  onValueChange={(value) => setValue("vendorType", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select vendor type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <ScrollArea className={" h-16"}>
+                    <ScrollArea className="h-24">
                       {vendorType?.map((vendor_type) => (
                         <SelectItem
                           value={vendor_type?.value}
@@ -62,15 +131,26 @@ const CreateVendorDialog = () => {
                     </ScrollArea>
                   </SelectContent>
                 </Select>
+                {errors.vendorType && (
+                  <p className="text-red-500 text-sm">
+                    {errors.vendorType.message}
+                  </p>
+                )}
               </div>
-            </div>
-            <div className="grid gap-3">
-              <label htmlFor="phonenumber">Contact No.</label>
-              <Input
-                id="phonenumber"
-                name="phonenumber"
-                placeholder="+91-123456789"
-              />
+
+              <div className="grid gap-3">
+                <label htmlFor="contactNumber">Contact No.</label>
+                <Input
+                  id="contactNumber"
+                  placeholder="+91-123456789"
+                  {...register("contactNumber")}
+                />
+                {errors.contactNumber && (
+                  <p className="text-red-500 text-sm">
+                    {errors.contactNumber.message}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
           <DialogFooter>
@@ -79,8 +159,8 @@ const CreateVendorDialog = () => {
             </DialogClose>
             <Button type="submit">Save changes</Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 };

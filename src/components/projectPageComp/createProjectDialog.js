@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
@@ -46,13 +46,14 @@ import {
   projectType,
   workers,
 } from "@/app/constants/utils";
-import { getMonthDifference } from "@/app/helperfns/helperfunctions";
+import { formatDateHelpfns, getMonthDifference } from "@/app/helperfns/helperfunctions";
 import { useProject } from "@/contexts/ProjectContext";
 import { useRouter } from "next/navigation";
 import { RotateCw } from "@deemlol/next-icons";
 import useGetHook from "@/hooks/useGetHook";
 import { toast } from "sonner";
 import { createProjectSchema } from "@/app/helperfns/zodSchema";
+import { useAuth } from "@/contexts/AuthContext";
 
 // ---- Type for form values ----
 
@@ -60,30 +61,27 @@ export function CreateProjectDialog() {
   const [step, setStep] = useState("client");
   const [isOpen, setisOpen] = useState(false);
   const [selectedWorkers, setSelectedWorkers] = useState([]);
-  const { handleCreateClient, handleCreateProject } = useProject();
+  const { handleCreateProject , combinedLoading} = useProject();
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const router = useRouter();
+ const {user} =  useAuth()
 
   // --- Fetching Designers [available-Designers]
   const {
     data: availableDesigners,
     loading:designersLoading,
     error:designersError,
+    refetch:refetchDesigners
   } = useGetHook("/api/user?role=designer");
-  console.log(availableDesigners);
-  if (designersError) {
-    toast.error(designersError);
-  }
 
   const form = useForm({
     resolver: zodResolver(createProjectSchema),
-    mode: "onTouched",
     defaultValues: {
       clientEmail: "",
       clientContact: "",
       clientName: "",
-      project_name: "",
-      project_type: "",
+      projectName: "",
+      projectType: "",
       designer: "",
       workers: [],
       dateRange: {
@@ -93,83 +91,114 @@ export function CreateProjectDialog() {
     },
   });
 
-  const handleOnSubmit = async (data) => {
-    setIsSendingEmail(true);
-    const {
-      clientEmail,
-      clientContact,
-      clientName,
-      project_name,
-      project_type,
-      designer,
-      workers,
-      dateRange,
-    } = data;
+  // --- Shift this in ProjectContext
+  const handleOnSubmit =  (data) => {
+    // setIsSendingEmail(true);
+    // const {
+    //   clientEmail,
+    //   clientContact,
+    //   clientName,
+    //   projectName,
+    //   projectType,
+    //   designer,
+    //   workers,
+    //   dateRange,
+    // } = data;
 
-    const { from, to } = dateRange;
-    const project_period = getMonthDifference(from, to);
+    // const { from, to } = dateRange;
+    // const project_period = getMonthDifference(from, to);
 
-    // --- there will be no client schema and vendor schema everyone will be saved in user with different role
+    // // --- there will be no client schema and vendor schema everyone will be saved in user with different role
+    // const clientData = {
+    //   clientContact,
+    //   clientEmail,
+    //   clientName,
+    //   role: "client",
+    // };
+
+    // const projectData = {
+    //   id: 2,
+    //   projectName,
+    //   projectType,
+    //   clientName,
+    //   designer,
+    //   workers,
+    //   dateRange,
+    //   project_period,
+    //   status: "not_started",
+    // };
+
+    // try {
+    //   const clientResponse = handleCreateClient(clientData);
+
+    //   if (!clientResponse?.success) {
+    //     alert(clientResponse?.message || "Client creation failed.");
+    //     return;
+    //   }
+
+    //   const projectResponse = handleCreateProject(projectData);
+
+    //   if (!projectResponse?.success) {
+    //     alert(projectResponse?.message || "Project creation failed.");
+    //     return;
+    //   }
+
+    //   const response = await fetch("/api/send-email", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       name: `${clientData.clientName}`,
+    //       email: `${clientData?.clientEmail}`,
+    //       message: `Now you can track your project process on PM . Use the below \n\n email-id and password for login .\n\n Email : ${clientData.clientEmail} Password:AbhishekOza`,
+    //     }),
+    //   });
+
+    //   if (response.ok) {
+    //     setIsSendingEmail(false);
+
+    //     await new Promise((resolve) => setTimeout(resolve, 300));
+
+    //     handleDialogClose(false);
+    //     sessionStorage.setItem("showProjectCreationToast", true);
+    //     router.push("/admin/dashboard");
+    //   }
+    // } catch (error) {
+    //   console.error("Submission error:", error);
+    //   alert("Something went wrong. Please try again.");
+    // } finally {
+    //   setIsSendingEmail(false);
+    // }
+
     const clientData = {
-      clientContact,
-      clientEmail,
-      clientName,
-      role: "client",
-    };
+      name:data?.clientName,
+      email:data?.clientEmail,
+      contactNumber:data?.clientContact
+    }
 
-    const projectData = {
-      id: 2,
-      project_name,
-      project_type,
-      clientName,
-      designer,
-      workers,
-      dateRange,
-      project_period,
-      status: "not_started",
-    };
+    const {from,to} = data?.dateRange
+    const formatedFrom = formatDateHelpfns(from)
+    const formatedTo = formatDateHelpfns(to)
 
-    try {
-      const clientResponse = handleCreateClient(clientData);
+    console.log(data.workers)
 
-      if (!clientResponse?.success) {
-        alert(clientResponse?.message || "Client creation failed.");
-        return;
+    const projectData ={
+      projectName:data?.projectName,
+      projectType:data?.projectType,
+      workers:data?.workers,
+      designerId:data?.designer,
+      dateRange:{
+        from:formatedFrom,
+        to:formatedTo
       }
+    }
 
-      const projectResponse = handleCreateProject(projectData);
+ 
 
-      if (!projectResponse?.success) {
-        alert(projectResponse?.message || "Project creation failed.");
-        return;
-      }
-
-      const response = await fetch("/api/send-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: `${clientData.clientName}`,
-          email: `${clientData?.clientEmail}`,
-          message: `Now you can track your project process on PM . Use the below \n\n email-id and password for login .\n\n Email : ${clientData.clientEmail} Password:AbhishekOza`,
-        }),
-      });
-
-      if (response.ok) {
-        setIsSendingEmail(false);
-
-        await new Promise((resolve) => setTimeout(resolve, 300));
-
-        handleDialogClose(false);
-        sessionStorage.setItem("showProjectCreationToast", true);
-        router.push("/admin/dashboard");
-      }
-    } catch (error) {
-      console.error("Submission error:", error);
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setIsSendingEmail(false);
+    const {success} = handleCreateProject(clientData,projectData)
+    if(success){
+      handleDialogClose()
     }
   };
 
@@ -217,7 +246,7 @@ export function CreateProjectDialog() {
       </DialogTrigger>
 
       <DialogContent className="max-w-4xl max-h-[90vh] ">
-        {isSendingEmail && (
+        {combinedLoading && (
           <div className=" absolute inset-0  z-10 flex items-center justify-center">
             <div className="flex flex-col items-center gap-2">
               <RotateCw size={24} className="animate-spin" />
@@ -283,7 +312,7 @@ export function CreateProjectDialog() {
                 <div className="flex flex-col gap-5 py-5 w-full">
                   <FormField
                     control={form.control}
-                    name="project_name"
+                    name="projectName"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Project Name</FormLabel>
@@ -300,7 +329,7 @@ export function CreateProjectDialog() {
 
                   <FormField
                     control={form.control}
-                    name="project_type"
+                    name="projectType"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Project Type</FormLabel>
@@ -342,7 +371,7 @@ export function CreateProjectDialog() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {availableDesigners.map((designer) => (
+                            {availableDesigners?.map((designer) => (
                               <SelectItem
                                 key={designer?._id}
                                 value={designer?._id}

@@ -5,10 +5,8 @@ import {
   formatStatus,
 } from "../helperfns/helperfunctions";
 
-
 import { Button } from "@/components/ui/button";
 import { useVendor } from "@/contexts/VendorContext";
-
 
 export const authNavgations = [
   {
@@ -48,51 +46,51 @@ export const vendorNavgations = [
 
 export const columnsDashboard = [
   {
-    accessorKey: "project_name",
+    accessorKey: "projectName",
     header: "Project Name",
   },
   {
-    accessorKey: "clientName",
+    accessorKey: "clientId",
     header: "Client Name",
   },
   {
-    accessorKey: "designer",
+    accessorKey: "designerId",
     header: "Designer",
   },
   {
-    accessorKey: "project_type",
+    accessorKey: "projectType",
     header: "Type",
-    cell: ({ row }) => formatProjectType(row.original.project_type),
+    // cell: ({ row }) => formatProjectType(row.original.project_type),
   },
-  {
-    accessorKey: "project_period",
-    header: "Project Tenure [Mons]",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => formatStatus(row.original.status),
-  },
+  // {
+  //   accessorKey: "project_period",
+  //   header: "Project Tenure [Mons]",
+  // },
+  // {
+  //   accessorKey: "status",
+  //   header: "Status",
+  //   cell: ({ row }) => formatStatus(row.original.status),
+  // },
 ];
 
 export const columnsVendors = [
   {
-    accessorKey: "vendor_name",
+    accessorKey: "name",
     header: "Vendor Name",
   },
   {
-    accessorKey: "vendor_type",
+    accessorKey: "vendorType",
     header: "Vendor Type",
   },
   {
-    accessorKey: "vendor_availabitily",
+    accessorKey: "availabilityStatus",
     header: "Availability Status",
   },
-  {
-    accessorKey: "vendor_availabile_date",
-    header: "Available Date",
-    cell: ({ row }) => formatDateHelpfns(row?.original?.vendor_availabile_date),
-  },
+  // {
+  //   accessorKey: "vendor_availabile_date",
+  //   header: "Available Date",
+  //   cell: ({ row }) => formatDateHelpfns(row?.original?.vendor_availabile_date),
+  // },
   // {
   //   id:"actions",
   //   header:"Actions",
@@ -156,7 +154,6 @@ export const useColumnsProjectRequests = () => {
       id: "actions",
       header: "Accept / Decline",
       cell: ({ row }) => {
-        
         return (
           <div className="flex items-center gap-2">
             <Button
@@ -186,7 +183,6 @@ export const useColumnsProjectRequests = () => {
   ];
 };
 
-
 export const vendorType = [
   { type: "Electrician", value: "electrician" },
   {
@@ -200,6 +196,10 @@ export const vendorType = [
   {
     type: "Construction",
     value: "construction",
+  },
+  {
+    type: "Painter",
+    value: "painter",
   },
 ];
 
@@ -254,8 +254,6 @@ export const workers = [
     type: "Electrician",
   },
 ];
-
-
 
 // ---Thinking of adding time
 // const vendorAssignment = [

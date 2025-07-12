@@ -4,41 +4,124 @@ import { vendors } from "@/app/constants/dummyData";
 import { useContext, createContext, useState, useEffect } from "react";
 import { useProject } from "./ProjectContext";
 import { useAuth } from "./AuthContext";
+import { generateRandomPassword } from "@/app/helperfns/helperfunctions";
+import { toast } from "sonner";
+import useGetHook from "@/hooks/useGetHook";
 
 const VendorContext = createContext();
 
 export const VendorProvider = ({ children }) => {
   const { vendorAssignments, setVendorAssignments } = useProject();
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
+  const [avaliableVendorList, setAvaliableVendorList] = useState([]);
+  const [vendorsData, setVendorsData] = useState();
 
-  //    ---- data format
-  // {
-  //         carpenter:[],
-  //         electirican:[],
-  //         plumber:[],
-  //         construction:[],
-  //         painter:[]
-  //     }
-  const [avaliableVendorList, setAvaliableVendorList] = useState();
-  const [vendorsData, setvendorsData] = useState(vendors);
+  // Use custom hook to fetch vendors
+  const {
+    data: vendorData,
+    loading: vendorLoading,
+    refetch,
+  } = useGetHook("/api/user?role=vendor");
 
-    useEffect(() => {
-    const storedVendors = localStorage.getItem("vendorData");
-    storedVendors ? setvendorsData(JSON.parse(storedVendors)) : '';
-  }, []);
-
+  // Update vendorsData when vendorData changes
   useEffect(() => {
-    localStorage.setItem("vendorData", JSON.stringify(vendorsData));
-  }, [vendorsData]);
+    if (!vendorLoading && vendorData) {
+      setVendorsData(vendorData);
+    }
+  }, [vendorData, vendorLoading]);
+
+  // Combine isLoading with vendorLoading
+  const combinedLoading = isLoading || vendorLoading;
+
+  const handleVendorCreation = async (data) => {
+    setIsLoading(true);
+    try {
+      const tempPassword = generateRandomPassword(8);
+      const redefinedData = {
+        ...data,
+        role: "vendor",
+        password: tempPassword,
+      };
+
+      // Create vendor
+      const vendorCreationResponse = await fetch("/api/auth/create-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(redefinedData),
+        credentials: "include",
+      });
+
+      let vendorResponseBody;
+      try {
+        vendorResponseBody = await vendorCreationResponse.json();
+      } catch (jsonError) {
+        console.error("Vendor creation JSON error:", jsonError);
+        toast.error("Invalid vendor creation response format");
+        return { success: false };
+      }
+
+      if (!vendorCreationResponse.ok || !vendorResponseBody.success) {
+        toast.error(vendorResponseBody.message || "Error creating vendor");
+        return { success: false };
+      }
+
+      // Send email
+      const emailResponse = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: redefinedData.email,
+          name: redefinedData.name,
+          password: redefinedData.password,
+        }),
+      });
+
+      let emailResponseBody;
+      try {
+        emailResponseBody = await emailResponse.json();
+      } catch (jsonError) {
+        console.error("Email response JSON error:", jsonError);
+        toast.error("Invalid email response format");
+        return { success: false };
+      }
+      console.log("Email response:", emailResponse.status, emailResponseBody);
+
+      if (emailResponse.status !== 200 || !emailResponseBody.success) {
+        console.log("Email response failed with status:", emailResponse.status);
+        toast.error(
+          emailResponseBody.message || "Error sending email to vendor"
+        );
+        return { success: false };
+      }
+      
+      await refetch();
+
+      toast.success(
+        "Vendor created successfully and password sent successfully"
+      );
+      return { success: true };
+    } catch (error) {
+      console.error("Vendor creation error:", error.message, error.stack);
+      toast.error(error.message || "Unexpected error occurred");
+      return { success: false };
+    } finally {
+      setIsLoading(false);
+      console.log("Finished vendor creation process");
+    }
+  };
 
   const handleAvailablevendorsPerProject = (projectWorkers) => {
-   
     // --- first get the all available vendors
     // --- list required types
     // --- data type
     // --- add the vendors as per type in segregated List
     const availablevendors = vendorsData.filter((v) => v.vendor_availabitily);
-    console.log(availablevendors)
+    console.log(availablevendors);
 
     const requiredtypes = projectWorkers.map((w) => w.type.toLowerCase());
 
@@ -104,22 +187,22 @@ export const VendorProvider = ({ children }) => {
 
     setVendorAssignments(updatedVendorAssignmentList);
 
-   if (decision === "accepted") {
-    const updatedVendors = vendorsData.map((vendor) => {
-      if (
-        vendor.vendor_name === vendorInfo.vendor_name &&
-        vendor.vendor_type === vendorInfo.vendor_type
-      ) {
-        return {
-          ...vendor,
-          vendor_availabitily: false, // mark as unavailable
-        };
-      }
-      return vendor;
-    });
+    if (decision === "accepted") {
+      const updatedVendors = vendorsData.map((vendor) => {
+        if (
+          vendor.vendor_name === vendorInfo.vendor_name &&
+          vendor.vendor_type === vendorInfo.vendor_type
+        ) {
+          return {
+            ...vendor,
+            vendor_availabitily: false, // mark as unavailable
+          };
+        }
+        return vendor;
+      });
 
-    setvendorsData(updatedVendors);
-  }
+      setvendorsData(updatedVendors);
+    }
   };
 
   const value = {
@@ -128,6 +211,8 @@ export const VendorProvider = ({ children }) => {
     handleProjectRequest,
     avaliableVendorList,
     vendorsData,
+    handleVendorCreation,
+    isLoading: combinedLoading,
   };
 
   return (

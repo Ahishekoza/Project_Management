@@ -108,7 +108,7 @@ export const NavLinks = () => {
             >
               <Tooltip>
                 <TooltipTrigger>
-                  <User size={24} />
+                  <User size={24} className=" cursor-pointer" />
                 </TooltipTrigger>
                 <TooltipContent>User</TooltipContent>
               </Tooltip>
@@ -127,7 +127,7 @@ export const NavLinks = () => {
       >
         <Tooltip>
           <TooltipTrigger asChild>
-            <User size={24} />
+            <User size={24}  />
           </TooltipTrigger>
           <TooltipContent>User</TooltipContent>
         </Tooltip>

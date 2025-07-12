@@ -10,6 +10,7 @@ export async function POST(req) {
     // Parse the JSON body from the request
     const { email, name, contactNumber, password, role ,vendorType } = await req.json();
 
+    // --- Add Phone number too
     const isUserPresent = await UserSchema.findOne({ email });
     if (isUserPresent) {
       return NextResponse.json(
@@ -35,6 +36,7 @@ export async function POST(req) {
       {
         success: true,
         message: "User created successfully!",
+        userId:user?._id
       },
       { status: 201 } // 201 Created is more appropriate for successful creation
     );
