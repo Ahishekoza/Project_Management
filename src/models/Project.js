@@ -37,8 +37,8 @@ const projectSchema = new mongoose.Schema(
     },
     projectStatus: {
       type: String,
-      enum: ["In_Progress,Not_Started", "Completed"],
-      default: "In_Progress",
+      enum: ["Not_Started", "In_Progress", "Completed"], // Corrected enum array
+      default: "Not_Started", // Updated default to match enum
     },
   },
   {

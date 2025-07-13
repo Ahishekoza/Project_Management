@@ -20,7 +20,9 @@ export async function GET(req) {
 
       projects = await ProjectSchema.findOne(matchQuery);
     } else {
-      projects = await ProjectSchema.find();
+      projects = await ProjectSchema.find()
+        .populate("clientId")
+        .populate("designerId");
     }
 
     if (!projects) {

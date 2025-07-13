@@ -23,7 +23,7 @@ export const ProjectProvider = ({ children }) => {
     loading: projectLoading,
     error: projectError,
     refetch,
-  } = useGetHook("");
+  } = useGetHook("/api/project");
 
   useEffect(() => {
     if (!projectLoading && projectsData) {
@@ -145,6 +145,7 @@ export const ProjectProvider = ({ children }) => {
         return { success: false };
       }
 
+      console.log("creating project")
       // -- create Project
       const projectCreationResponse = await fetch(
         "/api/project/create-project",
@@ -160,6 +161,7 @@ export const ProjectProvider = ({ children }) => {
         }
       );
 
+
       let projectResponseBody;
       try {
         projectResponseBody = await projectCreationResponse.json();
@@ -168,7 +170,7 @@ export const ProjectProvider = ({ children }) => {
         toast.error("Invalid Project creation response format");
         return { success: false };
       }
-
+      console.log(projectResponseBody)
       if (!projectCreationResponse.ok || !projectResponseBody.success) {
         toast.error(projectResponseBody.message || "Error creating client");
         return { success: false };

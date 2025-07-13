@@ -8,6 +8,8 @@ export async function POST(req) {
   try {
    const {projectName,projectType,clientId,designerId,workers,dateRange} =  await req.json()
 
+   console.log(clientId,designerId,projectName)
+
   const isProjectPresent =  await ProjectSchema.findOne({projectName})
   
   if(isProjectPresent){
@@ -25,17 +27,13 @@ export async function POST(req) {
     clientId,
     designerId,
     workers,
-    dateRange
+    dateRange,
+    projectStatus: "Not_Started",
   })
 
-  if(!newProject){
-    return NextResponse.json({
-        success:false,
-        message:"Fail to create new project."
-    },{
-        status:404,
-    })
-  }
+  await newProject.save()
+
+ 
 
   return NextResponse.json({
     success:true,

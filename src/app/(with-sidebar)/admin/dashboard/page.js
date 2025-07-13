@@ -8,6 +8,7 @@ import useSessionToast from "@/hooks/useSessionToast";
 
 export default function Dashboard() {
  const { projects}  = useProject()
+ console.log(projects)
 
  useSessionToast()
  

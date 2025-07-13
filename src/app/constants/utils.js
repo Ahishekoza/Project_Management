@@ -52,10 +52,12 @@ export const columnsDashboard = [
   {
     accessorKey: "clientId",
     header: "Client Name",
+    cell:({row})=> row.original?.clientId?.name
   },
   {
     accessorKey: "designerId",
     header: "Designer",
+    cell:({row})=> row.original?.designerId?.name
   },
   {
     accessorKey: "projectType",
