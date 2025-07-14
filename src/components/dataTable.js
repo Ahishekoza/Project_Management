@@ -84,7 +84,7 @@ export const DataTable = ({ columns, data, isRoute }) => {
                 key={row.id}
                 className="cursor-pointer"
                 onClick={
-                  isRoute ? () => handleRouting(row?.original?.id) : () => {}
+                  isRoute ? () => handleRouting(row?.original?._id) : () => {}
                 }
               >
                 {row.getVisibleCells().map((cell) => (

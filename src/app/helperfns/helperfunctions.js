@@ -14,9 +14,9 @@ export const formatProjectType = (type) => {
 
 export const formatStatus = (status) => {
   const statuses = {
-    in_progress: "In Progress",
-    not_started: "Not Started",
-    completed: "Completed",
+    In_Progress: "In Progress",
+    Not_Started: "Not Started",
+    Completed: "Completed",
   };
   return statuses[status] || status;
 };

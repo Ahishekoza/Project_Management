@@ -25,13 +25,27 @@ export const ProjectProvider = ({ children }) => {
     refetch,
   } = useGetHook("/api/project");
 
+  const {
+    data: projectAssignData,
+    loading: projectAssignLoading,
+    error: projectAssignError,
+  } = useGetHook("/api/assign-project");
+
+  console.log(projectAssignData)
+
   useEffect(() => {
     if (!projectLoading && projectsData) {
       setProjects(projectsData);
     }
   }, [projectsData, projectLoading]);
 
-  const combinedLoading = isLoading || projectLoading;
+  useEffect(() => {
+    if (!projectAssignLoading && projectAssignData) {
+      setVendorAssignments(projectAssignData);
+    }
+  }, [projectAssignLoading, projectAssignData]);
+
+  const combinedLoading = isLoading || projectLoading || projectAssignLoading;
 
   // --Projects
   // useEffect(() => {
@@ -74,7 +88,6 @@ export const ProjectProvider = ({ children }) => {
 
   // --- create project
   const handleCreateProject = async (clientData, projectData) => {
-
     // --- create a client ---> send the email and then create a project
 
     setIsLoading(true);
@@ -86,7 +99,7 @@ export const ProjectProvider = ({ children }) => {
         password: tempPassword,
       };
 
-      console.log("redinfed Data")
+      console.log("redinfed Data");
       // Create Client
       const clientCreationResponse = await fetch("/api/auth/create-user", {
         method: "POST",
@@ -111,7 +124,7 @@ export const ProjectProvider = ({ children }) => {
         return { success: false };
       }
 
-      console.log("client created ")
+      console.log("client created ");
 
       // Send email
       console.log("Sending email to:", redefinedClientData.email);
@@ -121,6 +134,7 @@ export const ProjectProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          template: "newuser",
           email: redefinedClientData.email,
           name: redefinedClientData.name,
           password: redefinedClientData.password,
@@ -145,7 +159,7 @@ export const ProjectProvider = ({ children }) => {
         return { success: false };
       }
 
-      console.log("creating project")
+      console.log("creating project");
       // -- create Project
       const projectCreationResponse = await fetch(
         "/api/project/create-project",
@@ -161,7 +175,6 @@ export const ProjectProvider = ({ children }) => {
         }
       );
 
-
       let projectResponseBody;
       try {
         projectResponseBody = await projectCreationResponse.json();
@@ -170,7 +183,7 @@ export const ProjectProvider = ({ children }) => {
         toast.error("Invalid Project creation response format");
         return { success: false };
       }
-      console.log(projectResponseBody)
+      console.log(projectResponseBody);
       if (!projectCreationResponse.ok || !projectResponseBody.success) {
         toast.error(projectResponseBody.message || "Error creating client");
         return { success: false };
@@ -187,37 +200,99 @@ export const ProjectProvider = ({ children }) => {
       setIsLoading(false);
       console.log("Finished project creation process");
     }
-    
   };
 
   // ---Assign to vendor and then notify
-  const handleAssignToVendor = (projectId, vendorInfo) => {
+  const handleAssignToVendor = async (project, vendorInfo) => {
     //  --- check in the vendor list does project exist  and vendor id and type exist if yes the then display the vendor status
     // ---if not registered then push the new vendor assignment in the array
-    const isPresent = vendorAssignments.find(
-      (va) => va.project_id === projectId && va.vendor_id === vendorInfo?._id
-    );
+    setIsLoading(true);
+    try {
+      const projectAssigned = await fetch("/api/assign-project", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          projectId: project?._id,
+          vendorId: vendorInfo?._id,
+          vendorAcceptanceStatus: "requested",
+        }),
+      });
 
-    if (isPresent) {
-      alert(
-        `Project has been assigned to the vendor . current status is ${isPresent?.status}`
-      );
-      return;
+      let projectAssignedResponseBody;
+      try {
+        projectAssignedResponseBody = await projectAssigned.json();
+      } catch (jsonError) {
+        console.error("Project creation JSON error:", jsonError);
+        toast.error("Invalid Project creation response format");
+        return { success: false };
+      }
+      console.log(projectAssignedResponseBody);
+      if (!projectAssigned.ok || !projectAssignedResponseBody.success) {
+        toast.error(
+          projectAssignedResponseBody.message || "Error creating client"
+        );
+        return { success: false };
+      }
+
+      const emailResponse = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          template: "notification",
+          email: vendorInfo?.email,
+          name: vendorInfo?.name,
+          projectName: project?.projectName,
+        }),
+      });
+
+      let emailResponseBody;
+      try {
+        emailResponseBody = await emailResponse.json();
+      } catch (jsonError) {
+        console.error("Email response JSON error:", jsonError);
+        toast.error("Invalid email response format");
+        return { success: false };
+      }
+      console.log("Email response:", emailResponse.status, emailResponseBody);
+
+      if (emailResponse.status !== 200 || !emailResponseBody.success) {
+        console.log("Email response failed with status:", emailResponse.status);
+        toast.error(
+          emailResponseBody.message || "Error sending email to vendor"
+        );
+        return { success: false };
+      }
+
+      // --- create a function to handle the vendor assignment updation
+      setVendorAssignments((prevAssig) => {
+        const existingAssignment = prevAssig.find(
+          (va) =>
+            va?.vendorId === projectAssignedResponseBody?.data?.vendorId?._id &&
+            va?.projectId === projectAssignedResponseBody?.data?.projectId?._id
+        );
+
+        if (existingAssignment) {
+          // --- Update existing assignment
+          return prevAssig;
+        } else {
+          return [...prevAssig, projectAssignedResponseBody?.data];
+        }
+      });
+
+      toast.success("Project assigned successfully");
+      return { success: true };
+    } catch (error) {
+      console.error("Project Assign  error:", error.message, error.stack);
+      toast.error(error.message || "Unexpected error occurred");
+      return { success: false };
+    } finally {
+      setIsLoading(false);
+      console.log("Finished project assignement process");
     }
-
-    const assignToVendor = {
-      project_id: projectId,
-      vendor_id: vendorInfo?.id,
-      status: "requested",
-      vendor_name: vendorInfo?.vendor_name,
-      vendor_type: vendorInfo?.vendor_type,
-    };
-
-    setVendorAssignments((prev) => [...prev, assignToVendor]);
-    alert(
-      `Project has been assigned for worker type ${vendorInfo?.vendor_type} `
-    );
-    return;
   };
 
   // --- Project will be send to vendors

@@ -211,16 +211,16 @@ export function CreateProjectDialog() {
   const handleWorkerToggle = (worker) => {
     let updatedWorkers;
 
-    if (worker.type === "All") {
+    if (worker.value === "all") {
       updatedWorkers =
         selectedWorkers.length === workers.length ? [] : [...workers];
     } else {
-      const isSelected = selectedWorkers.some((w) => w.type === worker.type);
+      const isSelected = selectedWorkers.some((w) => w.value === worker.value);
 
-      const filteredWorkers = selectedWorkers.filter((w) => w.type !== "All");
+      const filteredWorkers = selectedWorkers.filter((w) => w.value !== "all");
 
       updatedWorkers = isSelected
-        ? filteredWorkers.filter((w) => w.type !== worker.type)
+        ? filteredWorkers.filter((w) => w.value !== worker.value)
         : [...filteredWorkers, worker];
     }
 
@@ -395,11 +395,11 @@ export function CreateProjectDialog() {
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                           {workers.map((worker) => {
                             const isChecked = selectedWorkers.some(
-                              (w) => w.type === worker.type
+                              (w) => w.value === worker.value
                             );
                             return (
                               <FormItem
-                                key={worker.type}
+                                key={worker.value}
                                 className="flex flex-row items-start space-x-2 space-y-0"
                               >
                                 <FormControl>

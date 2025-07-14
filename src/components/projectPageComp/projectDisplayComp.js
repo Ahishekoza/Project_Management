@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/select";
 import TaskDisplayComp from "./taskDisplayComp";
 
-
 const ProjectDisplay = ({
   avaliableVendorList,
   handleValueChange,
@@ -30,11 +29,14 @@ const ProjectDisplay = ({
         .map(([type, vendors], index) => {
           // --- checking the status and displaying
           const assignedVendor = vendorAssignments.find(
-            (va) => va?.project_id === String(project?.id) && va?.vendor_type === type
+            (va) =>
+              va?.projectId?._id === project?._id &&
+              va?.vendorId?.vendorType === type
           );
+          console.log(vendorAssignments);
           return (
             <>
-              <Card key={`${type}-${index}`}>
+              <Card key={`${type}`}>
                 <CardHeader
                   className={"flex flex-col md:flex-row items-center  "}
                 >
@@ -43,17 +45,21 @@ const ProjectDisplay = ({
                     <CardDescription>Maintain data for {type}</CardDescription>
                   </div>
                   {/* --- handle vendor selection */}
-                  {assignedVendor?.vendor_name !== null &&
+                  {assignedVendor?.vendorName !== null &&
                   assignedVendor?.status === "accepted" ? (
                     <p className="md:text-right text-center w-full md:px-6 px-0">
-                      Vendor appointed :- {assignedVendor?.vendor_name}
+                      Vendor appointed :- {assignedVendor?.vendorName}
+                    </p>
+                  ) : assignedVendor?.vendorName === "requested" ? (
+                    <p className="md:text-right text-center w-full md:px-6 px-0">
+                      Vendor appointed :- {assignedVendor?.vendorName}
                     </p>
                   ) : (
                     <Select
                       className="flex-1"
-                      onValueChange={(selectedVendorId) => {
+                      onValueChange={(selectedVendorInfo) => {
                         const selectedVendor = vendors.find(
-                          (v) => v?._id === selectedVendorId
+                          (v) => v?._id === selectedVendorInfo?._id
                         );
                         handleValueChange(selectedVendor);
                       }}
@@ -63,8 +69,8 @@ const ProjectDisplay = ({
                       </SelectTrigger>
                       <SelectContent>
                         {vendors.map((vendor) => (
-                          <SelectItem value={vendor?._id} key={vendor?._id}>
-                            {vendor?.vendor_name}
+                          <SelectItem value={vendor} key={vendor?._id}>
+                            {vendor?.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -75,10 +81,13 @@ const ProjectDisplay = ({
                 show you can create task ones the worker accepts the request
                 */}
                 <CardContent>
-                  <TaskDisplayComp vendor_type={assignedVendor?.vendor_type} project={project}/>
+                  <TaskDisplayComp
+                    vendor_type={assignedVendor?.vendorId?.vendorType}
+                    project={project}
+                  />
                 </CardContent>
                 <CardFooter>
-                  <p>{assignedVendor?.status}</p>
+                  <p>{assignedVendor?.vendorAcceptanceStatus}</p>
                 </CardFooter>
               </Card>
             </>

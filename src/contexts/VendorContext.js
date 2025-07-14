@@ -75,6 +75,7 @@ export const VendorProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          template: "newuser",
           email: redefinedData.email,
           name: redefinedData.name,
           password: redefinedData.password,
@@ -120,10 +121,9 @@ export const VendorProvider = ({ children }) => {
     // --- list required types
     // --- data type
     // --- add the vendors as per type in segregated List
-    const availablevendors = vendorsData.filter((v) => v.vendor_availabitily);
-    console.log(availablevendors);
-
-    const requiredtypes = projectWorkers.map((w) => w.type.toLowerCase());
+    const availablevendors = vendorsData.filter((v) => v.availabilityStatus);
+    
+    const requiredtypes = projectWorkers.map((w) => w?.type?.toLowerCase());
 
     const segregatedVendors = {
       carpenter: [],
@@ -134,7 +134,7 @@ export const VendorProvider = ({ children }) => {
     };
 
     availablevendors.forEach((vendor) => {
-      const type = vendor.vendor_type.toLowerCase();
+      const type = vendor.vendorType.toLowerCase();
 
       if (requiredtypes.includes(type)) {
         segregatedVendors[type].push(vendor);

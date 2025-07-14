@@ -1,7 +1,6 @@
 import { House, Layers, Users } from "@deemlol/next-icons";
 import {
-  formatDateHelpfns,
-  formatProjectType,
+
   formatStatus,
 } from "../helperfns/helperfunctions";
 
@@ -68,11 +67,11 @@ export const columnsDashboard = [
   //   accessorKey: "project_period",
   //   header: "Project Tenure [Mons]",
   // },
-  // {
-  //   accessorKey: "status",
-  //   header: "Status",
-  //   cell: ({ row }) => formatStatus(row.original.status),
-  // },
+  {
+    accessorKey: "projectStatus",
+    header: "Project Status",
+    cell: ({ row }) => formatStatus(row.original.projectStatus),
+  },
 ];
 
 export const columnsVendors = [
@@ -239,21 +238,27 @@ export const projectType = [
 export const workers = [
   {
     type: "All",
+    value:"all"
   },
   {
     type: "Carpenter",
+    value:"carpenter"
   },
   {
     type: "Plumber",
+    value:"plumber"
   },
   {
     type: "Civil Work",
+    value:"civilWork"
   },
   {
     type: "Painter",
+    value:"painter"
   },
   {
     type: "Electrician",
+    value:"electician"
   },
 ];
 
@@ -267,3 +272,101 @@ export const workers = [
 //     designer: z.string(),
 //   },
 // ];
+
+// Email templates configuration
+export const emailTemplates = {
+  newuser: {
+    subject: (name) => `Welcome to Project Management Platform, ${name}!`,
+    text: (name, email, password) => `
+Welcome to the Project Management Platform, where you can manage and track projects with ease!
+
+Dear ${name},
+
+You have been registered on our platform. You can log in using the following credentials:
+
+- Email: ${email}
+- Temporary Password: ${password}
+
+Please use the temporary password to log in. You can change your password after logging in by visiting the settings page.
+
+Best regards,
+The Project Management Platform Team
+    `,
+    html: (name, email, password) => `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+        <h2 style="color: #2c3e50;">Welcome to Project Management Platform!</h2>
+        <p style="font-size: 16px; line-height: 1.5;">
+          Dear ${name},<br><br>
+          We're excited to have you on board! Our platform allows you to manage and track projects with ease. You have been successfully registered as a vendor.
+        </p>
+        <p style="font-size: 16px; line-height: 1.5;">
+          You can log in using the following credentials:
+        </p>
+        <ul style="font-size: 16px; line-height: 1.5;">
+          <li><strong>Email:</strong> ${email}</li>
+          <li><strong>Temporary Password:</strong> ${password}</li>
+        </ul>
+        <p style="font-size: 16px; line-height: 1.5;">
+          Please use the temporary password to log in. You can change your password after logging in by visiting the <strong>Settings</strong> page.
+        </p>
+        <p style="font-size: 16px; line-height: 1.5;">
+          If you have any questions, feel free to reply to this email or contact our support team.
+        </p>
+        <p style="font-size: 16px; line-height: 1.5;">
+          Best regards,<br>
+          The Project Management Platform Team
+        </p>
+        <hr style="border-top: 1px solid #eee; margin: 20px 0;">
+        <p style="font-size: 12px; color: #777;">
+          This is an automated email. Please do not reply directly unless necessary.
+        </p>
+      </div>
+    `,
+  },
+  notification: {
+    subject: (name, projectName) => `New Project Assignment: ${projectName} for ${name}`,
+    text: (name, email, projectName, designerName) => `
+Dear ${name},
+
+You have been assigned a new project on the Project Management Platform!
+
+- Project Name: ${projectName}
+- Assigned Designer: ${designerName}
+
+Please log in to track the project progress and collaborate with the team.
+
+Best regards,
+The Project Management Platform Team
+    `,
+    html: (name, email, projectName, designerName) => `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+        <h2 style="color: #2c3e50;">New Project Assignment!</h2>
+        <p style="font-size: 16px; line-height: 1.5;">
+          Dear ${name},<br><br>
+          You have been assigned a new project on our platform.
+        </p>
+        <p style="font-size: 16px; line-height: 1.5;">
+          Project Details:
+        </p>
+        <ul style="font-size: 16px; line-height: 1.5;">
+          <li><strong>Project Name:</strong> ${projectName}</li>
+          <li><strong>Assigned Designer:</strong> ${designerName}</li>
+        </ul>
+        <p style="font-size: 16px; line-height: 1.5;">
+          Please log in to track the project progress and collaborate with the team.
+        </p>
+        <p style="font-size: 16px; line-height: 1.5;">
+          If you have any questions, feel free to reply to this email or contact our support team.
+        </p>
+        <p style="font-size: 16px; line-height: 1.5;">
+          Best regards,<br>
+          The Project Management Platform Team
+        </p>
+        <hr style="border-top: 1px solid #eee; margin: 20px 0;">
+        <p style="font-size: 12px; color: #777;">
+          This is an automated email. Please do not reply directly unless necessary.
+        </p>
+      </div>
+    `,
+  },
+};
